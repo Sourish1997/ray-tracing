@@ -24,10 +24,29 @@ class Renderer:
                 point = top_left + (i * increment * cam.u) + (j * increment * cam.v)
                 color = self.ray_trace(Ray(cam.cam_from, point), self.max_depth)
                 im.putpixel(tuple(i, j), tuple(color))
-
         return im
 
+    def find_nearest_hit(self, ray):
+        dist_min = None
+        obj_nearest = None
+        for obj in self.scene.objects:
+            dist = obj.get_intersection(ray)
+            if dist is not None and (obj is None or dist < dist_min):
+                dist_min = dist
+                obj_nearest = obj
+        return dist_min, obj_nearest
+
     def ray_trace(self, ray, depth=0):
-        # TODO: Implement recursively. Find nearest intersection for ray, compute reflected ray and call recursively
+        # Find nearest intersection for ray, compute reflected ray and call recursively
         # with depth += 1 until depth == max_depth or no intersection is found.
-        pass
+        color = np.array([0, 0, 0])
+        dist, obj = self.find_nearest_hit(ray)
+        if dist is None:
+            return color
+        point = ray.origin + ray.dir * dist
+        normal = obj.get_normal(point)
+        color += obj.material.get_color(point, normal, self.scene.cam, self.scene.light)
+        if depth < self.max_depth:
+            color += self.ray_trace(Ray(point + normal * 1e-4, ray.dir - 2 * np.dot(ray.dir, normal) * normal),
+                                    depth + 1) * obj.material.ref
+        return color

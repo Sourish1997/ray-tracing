@@ -10,5 +10,5 @@ class Material:
         self.ref = ref
 
     @abstractmethod
-    def get_color(self, point, normal, light):
+    def get_color(self, point, normal, camera, light):
         pass

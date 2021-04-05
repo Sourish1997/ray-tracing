@@ -15,7 +15,7 @@ class Cylinder(Object):
 
     def get_intersection(self, ray):
         # Implement intersection math
-        # Returns distance to hit from ray origin if hit is found
+        # Returns distance to hit from ray origin if hit is found else None
         p = ray.origin
         d = ray.dir
 
@@ -43,7 +43,7 @@ class Cylinder(Object):
             else:
                 return None
 
-
     def get_normal(self, point):
-        # TODO: Returns normalized surface normal at point
-        pass
+        # Returns normalized surface normal at point
+        n = (point - self.c) - np.dot(self.v, (point - self.c)) * self.v
+        return n / np.linalg.norm(n)
