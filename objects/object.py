@@ -2,8 +2,7 @@ from abc import abstractmethod
 
 
 class Object:
-    def __init__(self, center, material):
-        self.center = center
+    def __init__(self, material):
         self.material = material
 
     @abstractmethod
