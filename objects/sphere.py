@@ -31,4 +31,4 @@ class Sphere(Object):
 
     def get_normal(self, point):
         # TODO: Returns normalized surface normal at point
-        return np.linalg.norm(np.subtract(point, self.center))
+        return np.subtract(point, self.center) / np.linalg.norm(np.subtract(point, self.center))
