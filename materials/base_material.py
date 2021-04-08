@@ -1,5 +1,5 @@
 from .material import Material
-import numpy 
+import numpy
 import math
 
 
@@ -73,9 +73,9 @@ class BaseMaterial(Material):
         # specB = self.spec[2]*light.col[2]*pow(RdotE, n)
         #
         # # Combine all seperated light values together
-        # red = 255 * (ambR + diffR + specR)
-        # green = 255 * (ambG + diffG + specG)
-        # blue = 255 * (ambB + diffB + specB)
+        # red = int(max(0,min((ambR+diffR+specR) * 255,255)))
+        # green = int(max(0,min((ambG+diffG+specG) * 255,255)))
+        # blue = int(max(0,min((ambB+diffB+specB) * 255,255)))
 
         # return [red, green, blue]
         return self.col * 0.5
