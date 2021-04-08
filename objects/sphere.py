@@ -20,14 +20,14 @@ class Sphere(Object):
 
         # a = 1 since ray dir is normalized
         a = 1
-        d = np.sqrt(np.square(b) - 4 * a * c)   # discriminant
+        d = np.square(b) - 4 * a * c  # discriminant
         if d < 0:
             return None
 
-        t0 = (-b + d) / (2 * a)
-        t1 = (-b - d) / (2 * a)
+        t0 = (-b + np.sqrt(d)) / (2 * a)
+        t1 = (-b - np.sqrt(d)) / (2 * a)
 
-        return np.min(t0, t1)
+        return min(t0, t1)
 
     def get_normal(self, point):
         # TODO: Returns normalized surface normal at point

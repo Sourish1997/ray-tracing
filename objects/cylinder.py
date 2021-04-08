@@ -1,6 +1,6 @@
-import numpy as np
 import math
 from .object import Object
+import numpy as np
 
 
 class Cylinder(Object):
@@ -11,7 +11,7 @@ class Cylinder(Object):
         self.c = c
         self.r = r
         self.h = h
-        self.v = v
+        self.v = v / np.linalg.norm(v)
 
     def get_intersection(self, ray):
         # Implement intersection math
@@ -19,7 +19,7 @@ class Cylinder(Object):
         p = ray.origin
         d = ray.dir
 
-        a = (self.v - np.dot(self.v, d) * self.v)
+        a = (d - np.dot(self.v, d) * self.v)
         a = np.dot(a, a)
         b = 2 * np.dot((d - np.dot(d, self.v) * self.v), ((p - self.c) - np.dot(p - self.c, self.v) * self.v))
         c = ((p - self.c) - np.dot((p - self.c), self.v) * self.v)
@@ -33,10 +33,13 @@ class Cylinder(Object):
             point = p + d * hit
             top = self.c + self.v * (self.h / 2)
             bottom = self.c - self.v * (self.h / 2)
-            alpha = -self.v[0] / self.v[2]
-            beta = -self.v[1] / self.v[2]
-            lambda_1 = (self.v[0] * bottom[0] + self.v[1] * bottom[1] + self.v[2] * bottom[2]) / self.v[2]
-            lambda_2 = (self.v[0] * top[0] + self.v[1] * top[1] + self.v[2] * top[2]) / self.v[2]
+            den = self.v[2] if self.v[2] != 0 else 1
+            alpha = -self.v[0] / den
+            beta = -self.v[1] / den
+            lambda_1 = (self.v[0] * bottom[0] + self.v[1] * bottom[1] + self.v[2] * bottom[2]) / den
+            lambda_2 = (self.v[0] * top[0] + self.v[1] * top[1] + self.v[2] * top[2]) / den
+            if lambda_2 < lambda_1:
+                lambda_2, lambda_1 = lambda_1, lambda_2
 
             if lambda_1 < point[2] - alpha * point[0] - beta * point[1] < lambda_2:
                 return hit
