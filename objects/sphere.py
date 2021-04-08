@@ -9,10 +9,7 @@ class Sphere(Object):
         self.radius = radius
 
     def get_intersection(self, ray):
-        # TODO: Implement intersection math, returns distance from ray origin
-        # xd, yd, zd = ray.dir
-        # x0, y0, z0 = ray.origin
-        # xc, yc, zc = self.center
+        # Returns distance from ray origin
 
         # vectorized calculation
         b = 2 * np.sum(ray.dir * (ray.origin - self.center))
@@ -30,5 +27,5 @@ class Sphere(Object):
         return min(t0, t1)
 
     def get_normal(self, point):
-        # TODO: Returns normalized surface normal at point
+        # Returns normalized surface normal at point
         return np.subtract(point, self.center) / np.linalg.norm(np.subtract(point, self.center))
