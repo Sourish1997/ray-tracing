@@ -1,0 +1,109 @@
+{
+  "scene":{
+    "shapes":[
+      {
+        "id":"cylinder1",
+        "notes":"",
+        "geometry":"cylinder",
+        "material":{
+          "Cs":[
+            0,
+            0,
+            1
+          ],
+          "Ka":0.5,
+          "Kd":0.75,
+          "Ks":0.9,
+          "n":2.0
+        },
+        "geomParams": {
+          "center": [2, 0, 4],
+          "radius": 2,
+          "h": 12,
+          "v": [0, 1, 0]        
+        }
+      },
+      {
+        "id":"sphere1",
+        "notes":"no scaling",
+        "geometry":"sphere",
+        "material":{
+          "Cs":[
+            1,
+            0,
+            0
+          ],
+          "Ka":0.35,
+          "Kd":0.5,
+          "Ks":0.9,
+          "n":5.0
+        },
+        "geomParams": {
+          "center": [0, 0, 0],
+          "radius": 2   
+        }
+      },
+      {
+        "id":"sphere2",
+        "notes":"",
+        "geometry":"sphere",
+        "material":{
+          "Cs":[
+            0,
+            1,
+            0
+          ],
+          "Ka":0.15,
+          "Kd":0.35,
+          "Ks":0.9,
+          "n":10.0
+        },
+        "geomParams": {
+          "center": [3, 0, 0],
+          "radius": 1       
+        }
+      }
+    ],
+    "lights":[
+      {
+        "id":"L2",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":0.6,
+        "pos":[
+          4,
+          4,
+          -10
+        ]
+      }
+    ],
+    "camera":{
+      "from":[
+        2,
+        -4,
+        -8
+      ],
+      "to":[
+        2,
+        -3,
+        -6
+      ],
+      "bounds":[
+        3,
+        10,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "resolution":[
+        512,
+        512
+      ]
+    }
+  }
+}
