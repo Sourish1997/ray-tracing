@@ -35,8 +35,8 @@ def parse_scene_json(scene_json):
 
     objects = []
     for obj in scene["shapes"]:
-        prop = {'col': np.array(obj["material"]["Cs"]), 'amb': obj["material"]["Ka"], 'dif': obj["material"]["Kd"], 'spec': obj["material"]["Ks"], 'ref': 0.8}
-        mat = {'material': BaseMaterial(**prop)}
+        prop = {"col": np.array(obj["material"]["Cs"]), "amb": obj["material"]["Ka"], "dif": obj["material"]["Kd"], "spec": obj["material"]["Ks"], "ref": 0.8, "n": obj["material"]["n"]}
+        mat = {"material": BaseMaterial(**prop)}
         geom_params = obj["geomParams"]
         if obj["geometry"] == "sphere":
             scene_obj = Sphere(np.array(geom_params["center"]), geom_params["radius"], **mat)
@@ -48,14 +48,14 @@ def parse_scene_json(scene_json):
 
 def main():
     # Create a scene object
-    scene = parse_scene("scene.json")
+    scene = parse_scene_json("scene.json")
 
     # Create a renderer object with scene passed as param
     renderer = Renderer(scene, 3)
 
-    # Call the renderer's render function
+    # Call the renderer"s render function
     im = renderer.render()
-    im.save('img.png')
+    im.save("img.png")
 
 
 if __name__ == "__main__":
