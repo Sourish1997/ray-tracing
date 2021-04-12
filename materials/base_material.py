@@ -1,5 +1,5 @@
 from .material import Material
-import numpy
+import numpy as np
 import math
 
 
@@ -9,10 +9,7 @@ class BaseMaterial(Material):
 
     def get_color(self, point, normal, camera, light):
         # --AMBIENT LIGHT--
-        # ambient = Ka * ambient color, assuming Ka = self.amb and ambient color = light.col
-        # ambR = self.amb[0]*light.col[0]
-        # ambG = self.amb[1]*light.col[1]
-        # ambB = self.amb[2]*light.col[2]
+        # ambient = Ka * ambient color, assuming Ka = self.amb and ambient color = self.col (material color)
         #
         # # --DIFFUSE LIGHT--
         # # Find dot product between L (light ray direction) and N (surface normal)
@@ -24,6 +21,19 @@ class BaseMaterial(Material):
         # diffR = self.dif[0]*light.col[0]*NdotL
         # diffG = self.dif[1]*light.col[1]*NdotL
         # diffB = self.dif[2]*light.col[2]*NdotL
+
+        # n_dot_l = np.dot(light.light_cam, normal)
+        #
+        # # Normalize the dot product
+        # if n_dot_l < 0:
+        #     n_dot_l = -n_dot_l
+        #
+        # if n_dot_l > 1:
+        #     n_dot_l = 1
+        #
+        # d_r = light.col[0] * 0.4 * self.col[0] * self.dif * n_dot_l
+        # d_g = light.col[1] * 0.4 * self.col[1] * self.dif * n_dot_l
+        # d_b = light.col[2] * 0.4 * self.col[2] * self.dif * n_dot_l
         #
         # # --SPECULAR LIGHT--
         # # Calculate E (eye ray direction), and find dot product between N and E
@@ -77,5 +87,37 @@ class BaseMaterial(Material):
         # green = int(max(0,min((ambG+diffG+specG) * 255,255)))
         # blue = int(max(0,min((ambB+diffB+specB) * 255,255)))
 
+        # c_r = self.amb * light.col[0] * self.col[0] * 0.05
+        # c_g = self.amb * light.col[1] * self.col[1] * 0.05
+        # c_b = self.amb * light.col[2] * self.col[2] * 0.05
+
+        # c_r = self.spec * light.col[0] * self.col[0] * pow(max(0, np.dot(r, camera.cam_from - point)), self.n)
+        # c_g = self.spec * light.col[1] * self.col[1] * pow(max(0, np.dot(r, camera.cam_from - point)), self.n)
+        # c_b = self.spec * light.col[2] * self.col[2] * pow(max(0, np.dot(r, camera.cam_from - point)), self.n)
+
+        # Lambertian shading for Diffuse:
+        n_dot_l = np.dot(unitize(np.array(light.pos - point)), normal)
+
+        c_r = self.dif * light.col[0] * self.col[0] * max(0, n_dot_l)
+        c_g = self.dif * light.col[1] * self.col[1] * max(0, n_dot_l)
+        c_b = self.dif * light.col[2] * self.col[2] * max(0, n_dot_l)
+
+        r = -1 * np.array(light.pos) + 2 * n_dot_l * normal
+
+        return np.array([c_r, c_g, c_b])
         # return [red, green, blue]
-        return self.col * 0.5
+        # return self.col * 0.5
+
+
+def unitize(cam_unit):
+    """
+    Function to unitize the matrix
+    :param cam_unit: input matrix
+    :return:
+
+    """
+    # Get the magnitude of the vector:
+
+    size = math.sqrt(pow(cam_unit[0], 2) + pow(cam_unit[1], 2) + pow(cam_unit[2], 2))
+
+    return [cam_unit[0]/size, cam_unit[1]/size, cam_unit[2]/size]
