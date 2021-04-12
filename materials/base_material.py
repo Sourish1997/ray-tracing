@@ -7,17 +7,25 @@ class BaseMaterial(Material):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+    # NOTE: 'light' is a list of 'Light' objects from multiple light sources
+    # TODO: need to add support for multiple lights as well
     def get_color(self, point, normal, camera, light):
         # --AMBIENT LIGHT--
-        # ambient = Ka * ambient color, assuming Ka = self.amb and ambient color = self.col (material color)
+
+        # ambient = Ka * ambient color, assuming Ka = self.amb and ambient color = light.col
+        # ambR = self.amb[0]*light[0].col[0]
+        # ambG = self.amb[1]*light[0].col[1]
+        # ambB = self.amb[2]*light[0].col[2]
+
         #
         # # --DIFFUSE LIGHT--
         # # Find dot product between L (light ray direction) and N (surface normal)
-        # L = [light.pos[0], light.pos[1], light.pos[2]]
+        # L = [light[0].pos[0], light[0].pos[1], light[0].pos[2]]
         # N = [normal[0], normal[1], normal[2]]
         # NdotL = numpy.dot(N, L)
         #
         # # diffuse = Kd * N.L * directional color, assuming Kd = self.diff
+
         # diffR = self.dif[0]*light.col[0]*NdotL
         # diffG = self.dif[1]*light.col[1]*NdotL
         # diffB = self.dif[2]*light.col[2]*NdotL
@@ -34,6 +42,7 @@ class BaseMaterial(Material):
         # d_r = light.col[0] * 0.4 * self.col[0] * self.dif * n_dot_l
         # d_g = light.col[1] * 0.4 * self.col[1] * self.dif * n_dot_l
         # d_b = light.col[2] * 0.4 * self.col[2] * self.dif * n_dot_l
+
         #
         # # --SPECULAR LIGHT--
         # # Calculate E (eye ray direction), and find dot product between N and E
@@ -78,9 +87,9 @@ class BaseMaterial(Material):
         #
         # # specular = Ks * (R.E)^n * directional color, assuming Ks = self.spec, assuming n is not defined somewhere already
         # n = 2
-        # specR = self.spec[0]*light.col[0]*pow(RdotE, n)
-        # specG = self.spec[1]*light.col[1]*pow(RdotE, n)
-        # specB = self.spec[2]*light.col[2]*pow(RdotE, n)
+        # specR = self.spec[0]*light[0].col[0]*pow(RdotE, n)
+        # specG = self.spec[1]*light[0].col[1]*pow(RdotE, n)
+        # specB = self.spec[2]*light[0].col[2]*pow(RdotE, n)
         #
         # # Combine all seperated light values together
         # red = int(max(0,min((ambR+diffR+specR) * 255,255)))
