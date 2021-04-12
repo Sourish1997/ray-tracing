@@ -7,6 +7,9 @@ class BaseMaterial(Material):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+    # NOTE: 'light' is an single 'Light' object. Can get all lights here as a list by 
+    # passing in the 'self.scene.light' in 'obj.material.get_color()' function of renderer.py
+    # TODO: need to add support for multiple lights as well
     def get_color(self, point, normal, camera, light):
         # --AMBIENT LIGHT--
         # ambient = Ka * ambient color, assuming Ka = self.amb and ambient color = light.col

@@ -29,8 +29,7 @@ def parse_scene_json(scene_json):
     fov = math.pi / 3
     cam = Camera(cam_from, cam_to, u, v, fov, width, height)
 
-    # light (only support for point lights rn, requires refactoring of light.py)
-    # TODO: need to add support for multiple lights as well
+    # TODO: light (only support for point lights rn, requires refactoring of light.py)
     light = []
     for i in len(scene["lights"]):
         light.append(Light(np.array(scene["lights"][i]["color"]), np.array(scene["lights"][i]["pos"])))
