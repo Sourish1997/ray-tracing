@@ -105,13 +105,13 @@ class BaseMaterial(Material):
         # c_b = self.spec * light.col[2] * self.col[2] * pow(max(0, np.dot(r, camera.cam_from - point)), self.n)
 
         # Lambertian shading for Diffuse:
-        n_dot_l = np.dot(unitize(np.array(light.pos - point)), normal)
+        n_dot_l = np.dot(unitize(np.array(light[0].pos - point)), normal)
 
-        c_r = self.dif * light.col[0] * self.col[0] * max(0, n_dot_l)
-        c_g = self.dif * light.col[1] * self.col[1] * max(0, n_dot_l)
-        c_b = self.dif * light.col[2] * self.col[2] * max(0, n_dot_l)
+        c_r = self.dif * light[0].col[0] * self.col[0] * max(0, n_dot_l)
+        c_g = self.dif * light[0].col[1] * self.col[1] * max(0, n_dot_l)
+        c_b = self.dif * light[0].col[2] * self.col[2] * max(0, n_dot_l)
 
-        r = -1 * np.array(light.pos) + 2 * n_dot_l * normal
+        # r = -1 * np.array(light[0].pos) + 2 * n_dot_l * normal
 
         return np.array([c_r, c_g, c_b])
         # return [red, green, blue]
