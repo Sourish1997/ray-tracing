@@ -45,7 +45,8 @@ class Renderer:
             return color
         point = ray.origin + ray.dir * dist
         normal = obj.get_normal(point)
-        color += obj.material.get_color(point, normal, self.scene.cam, self.scene.light)
+        for light in self.scene.light:
+            color += obj.material.get_color(point, normal, self.scene.cam, light)
         if depth < self.max_depth:
             color += self.ray_trace(Ray(point + normal * 1e-4, ray.dir - 2 * np.dot(ray.dir, normal) * normal),
                                     depth + 1) * obj.material.ref

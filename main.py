@@ -31,7 +31,9 @@ def parse_scene_json(scene_json):
 
     # light (only support for point lights rn, requires refactoring of light.py)
     # TODO: need to add support for multiple lights as well
-    light = Light(np.array(scene["lights"][0]["color"]), np.array(scene["lights"][0]["pos"]))
+    light = []
+    for i in len(scene["lights"]):
+        light.append(Light(np.array(scene["lights"][i]["color"]), np.array(scene["lights"][i]["pos"])))
 
     objects = []
     for obj in scene["shapes"]:
