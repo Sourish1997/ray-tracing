@@ -6,15 +6,16 @@
         "notes":"",
         "geometry":"cylinder",
         "material":{
-          "Cs":[
+          "col":[
             0,
             0,
             1
           ],
-          "Ka":0.5,
-          "Kd":0.75,
-          "Ks":0.9,
-          "n":2.0
+          "amb":0.5,
+          "dif":0.75,
+          "spec":0.9,
+          "n":2.0,
+          "ref": 0.8
         },
         "geomParams": {
           "center": [2, 0, 4],
@@ -28,15 +29,16 @@
         "notes":"no scaling",
         "geometry":"sphere",
         "material":{
-          "Cs":[
+          "col":[
             1,
             0,
             0
           ],
-          "Ka":0.35,
-          "Kd":0.5,
-          "Ks":0.9,
-          "n":5.0
+          "amb":0.35,
+          "dif":0.5,
+          "spec":0.9,
+          "n":5.0,
+          "ref": 0.8
         },
         "geomParams": {
           "center": [0, 0, 0],
@@ -48,15 +50,16 @@
         "notes":"",
         "geometry":"sphere",
         "material":{
-          "Cs":[
+          "col":[
             0,
             1,
             0
           ],
-          "Ka":0.15,
-          "Kd":0.35,
-          "Ks":0.9,
-          "n":10.0
+          "amb":0.15,
+          "dif":0.35,
+          "spec":0.9,
+          "n":10.0,
+          "ref": 0.8
         },
         "geomParams": {
           "center": [3, 0, 0],
@@ -107,14 +110,17 @@
         -3,
         -6
       ],
-      "bounds":[
-        3,
-        10,
-        1,
-        -1,
-        1,
+      "u":[
+        2,
+        0,
+        0
+      ],
+      "v":[
+        0,
+        2,
         -1
       ],
+      "fov": 3,
       "resolution":[
         512,
         512

@@ -24,9 +24,9 @@ def parse_scene_json(scene_json):
     width, height = scene["camera"]["resolution"]
     cam_from = np.array(scene["camera"]["from"])
     cam_to = np.array(scene["camera"]["to"])
-    u = np.array([2, 0, 0])
-    v = np.array([0, 2, -1])
-    fov = math.pi / 3
+    u = np.array(scene["camera"]["u"])
+    v = np.array(scene["camera"]["v"])
+    fov = math.pi / scene["camera"]["fov"]
     cam = Camera(cam_from, cam_to, u, v, fov, width, height)
 
     # TODO: light (only support for point lights rn, requires refactoring of light.py)
@@ -36,7 +36,7 @@ def parse_scene_json(scene_json):
 
     objects = []
     for obj in scene["shapes"]:
-        prop = {"col": np.array(obj["material"]["Cs"]), "amb": obj["material"]["Ka"], "dif": obj["material"]["Kd"], "spec": obj["material"]["Ks"], "ref": 0.8, "n": obj["material"]["n"]}
+        prop = obj["material"]
         mat = {"material": BaseMaterial(**prop)}
         geom_params = obj["geomParams"]
         if obj["geometry"] == "sphere":
