@@ -108,10 +108,14 @@ class BaseMaterial(Material):
         n_dot_l = np.dot(unitize(np.array(light[0].pos - point)), normal)
 
         # diffuse
-        c_r, c_g, c_b = self.dif * light[0].col * self.col * max(0, n_dot_l)
+        # c_r, c_g, c_b = self.dif * light[0].col * self.col * max(0, n_dot_l)
 
         # specularity
-        r = -1 * unitize(light[0].pos) + 2 * n_dot_l * normal
+        r = -1 * unitize(light[0].pos - point) + 2 * n_dot_l * normal
+        h = unitize(np.array(light[0].pos - point) + np.array(camera.v2 - point))
+        n_dot_h = np.dot(h, normal)
+        c_r, c_g, c_b = 0.5 * light[0].col * self.col * (self.dif * max(0, n_dot_l) + self.spec * pow(max(0, n_dot_h), self.n))
+        # c_r, c_g, c_b = (self.spec * light[0].col * self.col * pow(max(0, np.dot(unitize(camera.v2), r)), self.n))
 
         # print(c_r, c_g, c_b)
         return np.array([c_r, c_g, c_b])
