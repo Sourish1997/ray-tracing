@@ -24,7 +24,7 @@ class Sphere(Object):
         t0 = (-b + np.sqrt(d)) / (2 * a)
         t1 = (-b - np.sqrt(d)) / (2 * a)
 
-        return min(t0, t1)
+        return min(t0, t1) if min(t0, t1) > 0 else None
 
     def get_normal(self, point):
         # Returns normalized surface normal at point
