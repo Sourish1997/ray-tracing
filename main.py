@@ -36,7 +36,7 @@ def parse_scene_json(scene_json):
 
     objects = []
     for obj in scene["shapes"]:
-        prop = {"col": np.array(obj["material"]["Cs"]), "amb": obj["material"]["Ka"], "dif": obj["material"]["Kd"], "spec": obj["material"]["Ks"], "ref": 0.8, "n": obj["material"]["n"]}
+        prop = {"col": np.array(obj["material"]["Cs"]), "amb": obj["material"]["Ka"], "dif": obj["material"]["Kd"], "spec": obj["material"]["Ks"], "ref": 0.2, "n": obj["material"]["n"]}
         mat = {"material": BaseMaterial(**prop)}
         geom_params = obj["geomParams"]
         if obj["geometry"] == "sphere":

@@ -23,7 +23,7 @@ class Renderer:
             for j in range(cam.height):
                 point = top_left + (i * increment * cam.u) + (j * increment * cam.v)
                 color = self.ray_trace(Ray(cam.cam_from, point))
-                im.putpixel((i, j), tuple(color))
+                im.putpixel((i, j), tuple((color * 255).astype(np.int64)))
         return im
 
     def find_nearest_hit(self, ray):
@@ -47,6 +47,6 @@ class Renderer:
         normal = obj.get_normal(point)
         color += obj.material.get_color(point, normal, self.scene.cam, self.scene.light)
         if depth < self.max_depth:
-            color += self.ray_trace(Ray(point + normal * 1e-4, ray.dir - 2 * np.dot(ray.dir, normal) * normal),
+            color += self.ray_trace(Ray(point + normal * 1e-4, None, ray.dir + 2 * np.dot(ray.dir, normal) * normal),
                                     depth + 1) * obj.material.ref
-        return (color * 255).astype(np.int64)
+        return color
