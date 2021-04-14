@@ -107,12 +107,13 @@ class BaseMaterial(Material):
         # Lambertian shading for Diffuse:
         n_dot_l = np.dot(unitize(np.array(light[0].pos - point)), normal)
 
-        c_r = self.dif * light[0].col[0] * self.col[0] * max(0, n_dot_l)
-        c_g = self.dif * light[0].col[1] * self.col[1] * max(0, n_dot_l)
-        c_b = self.dif * light[0].col[2] * self.col[2] * max(0, n_dot_l)
+        # diffuse
+        c_r, c_g, c_b = self.dif * light[0].col * self.col * max(0, n_dot_l)
 
-        # r = -1 * np.array(light[0].pos) + 2 * n_dot_l * normal
+        # specularity
+        r = -1 * unitize(light[0].pos) + 2 * n_dot_l * normal
 
+        # print(c_r, c_g, c_b)
         return np.array([c_r, c_g, c_b])
         # return [red, green, blue]
         # return self.col * 0.5
@@ -129,4 +130,4 @@ def unitize(cam_unit):
 
     size = math.sqrt(pow(cam_unit[0], 2) + pow(cam_unit[1], 2) + pow(cam_unit[2], 2))
 
-    return [cam_unit[0]/size, cam_unit[1]/size, cam_unit[2]/size]
+    return np.array([cam_unit[0]/size, cam_unit[1]/size, cam_unit[2]/size])
