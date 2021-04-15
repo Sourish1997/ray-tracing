@@ -29,7 +29,9 @@ class Cylinder(Object):
         if disc < 0:
             return None
         else:
-            hit = (-b - math.sqrt(disc)) / (2 * a)
+            hit = min((-b - math.sqrt(disc)) / (2 * a), (-b + math.sqrt(disc)) / (2 * a))
+            if hit <= 0:
+                return None
             point = p + d * hit
             top = self.c + self.v * (self.h / 2)
             bottom = self.c - self.v * (self.h / 2)
@@ -38,8 +40,6 @@ class Cylinder(Object):
             beta = -self.v[1] / den
             lambda_1 = (self.v[0] * bottom[0] + self.v[1] * bottom[1] + self.v[2] * bottom[2]) / den
             lambda_2 = (self.v[0] * top[0] + self.v[1] * top[1] + self.v[2] * top[2]) / den
-            if lambda_2 < lambda_1:
-                lambda_2, lambda_1 = lambda_1, lambda_2
 
             if lambda_1 < point[2] - alpha * point[0] - beta * point[1] < lambda_2:
                 return hit

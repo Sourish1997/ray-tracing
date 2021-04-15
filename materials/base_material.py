@@ -105,33 +105,22 @@ class BaseMaterial(Material):
         # c_b = self.spec * light.col[2] * self.col[2] * pow(max(0, np.dot(r, camera.cam_from - point)), self.n)
 
         # Lambertian shading for Diffuse:
-        n_dot_l = np.dot(unitize(np.array(light[0].pos - point)), normal)
+
+        n_dot_l = np.dot((light[0].pos - point) / np.linalg.norm(light[0].pos - point), normal)
 
         # diffuse
         # c_r, c_g, c_b = self.dif * light[0].col * self.col * max(0, n_dot_l)
 
         # specularity
-        r = -1 * unitize(light[0].pos - point) + 2 * n_dot_l * normal
-        h = unitize(np.array(light[0].pos - point) + np.array(camera.v2 - point))
+        r = -1 * (light[0].pos - point) / np.linalg.norm(light[0].pos - point) + 2 * n_dot_l * normal
+        h = (np.array(light[0].pos - point) + np.array(camera.v2 - point)) / np.linalg.norm((np.array(light[0].pos - point) + np.array(camera.v2 - point)))
         n_dot_h = np.dot(h, normal)
-        c_r, c_g, c_b = 0.5 * light[0].col * self.col * (self.dif * max(0, n_dot_l) + self.spec * pow(max(0, n_dot_h), self.n))
+        c_r, c_g, c_b = light[0].col * self.col * (self.dif * max(0, n_dot_l) + (0.6 * self.spec * pow(max(0, n_dot_h), self.n)))
         # c_r, c_g, c_b = (self.spec * light[0].col * self.col * pow(max(0, np.dot(unitize(camera.v2), r)), self.n))
+        # c_r, c_g, c_b = light[0].col * self.col * (self.dif * max(0, n_dot_l) + (0.6 * self.spec * (max(0, pow(n_dot_h, self.n)))))
 
         # print(c_r, c_g, c_b)
         return np.array([c_r, c_g, c_b])
         # return [red, green, blue]
         # return self.col * 0.5
 
-
-def unitize(cam_unit):
-    """
-    Function to unitize the matrix
-    :param cam_unit: input matrix
-    :return:
-
-    """
-    # Get the magnitude of the vector:
-
-    size = math.sqrt(pow(cam_unit[0], 2) + pow(cam_unit[1], 2) + pow(cam_unit[2], 2))
-
-    return np.array([cam_unit[0]/size, cam_unit[1]/size, cam_unit[2]/size])
