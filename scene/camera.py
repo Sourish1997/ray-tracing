@@ -10,3 +10,5 @@ class Camera:
         self.width = width
         self.height = height
         self.fov = fov
+        # Camera V value, not normalized:
+        self.v2 = v
