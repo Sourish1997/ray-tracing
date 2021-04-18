@@ -69,7 +69,7 @@
     ],
     "lights":[
       {
-        "id":"L2",
+        "id":"L1",
         "type":"point",
         "color":[
           1,
