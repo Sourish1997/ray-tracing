@@ -35,13 +35,9 @@ class Cylinder(Object):
             point = p + d * hit
             top = self.c + self.v * (self.h / 2)
             bottom = self.c - self.v * (self.h / 2)
-            den = self.v[2] if self.v[2] != 0 else 1
-            alpha = -self.v[0] / den
-            beta = -self.v[1] / den
-            lambda_1 = (self.v[0] * bottom[0] + self.v[1] * bottom[1] + self.v[2] * bottom[2]) / den
-            lambda_2 = (self.v[0] * top[0] + self.v[1] * top[1] + self.v[2] * top[2]) / den
-
-            if lambda_1 < point[2] - alpha * point[0] - beta * point[1] < lambda_2:
+            v1 = np.dot((point - bottom), self.v) * self.v
+            v2 = np.dot((top - point), self.v) * self.v
+            if np.linalg.norm(bottom + v1 + v2 - top) < 0.0001:
                 return hit
             else:
                 return None

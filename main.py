@@ -53,14 +53,14 @@ def parse_scene_json(scene_json):
 
 def main():
     # Create a scene object
-    scene = parse_scene_json("scene1.json")
+    scene = parse_scene_json("scene.json")
 
     # Create a renderer object with scene passed as param
     renderer = Renderer(scene, 3)
 
     # Call the renderer"s render function
     im = renderer.render()
-    im.save("img1.png")
+    im.save("img.png")
 
 
 if __name__ == "__main__":
