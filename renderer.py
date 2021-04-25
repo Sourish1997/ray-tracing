@@ -2,6 +2,7 @@ import numpy as np
 import math
 from PIL import Image
 from scene.ray import Ray
+import scene
 
 
 class Renderer:
@@ -36,6 +37,14 @@ class Renderer:
                 obj_nearest = obj
         return dist_min, obj_nearest
 
+    def is_blocked(self, point, light, dist):
+        ray = Ray(point, None, -light.get_dir(point))
+        for obj in self.scene.objects:
+            hit_dist = obj.get_intersection(ray)
+            if hit_dist is not None and hit_dist < dist:
+                return True
+        return False
+
     def ray_trace(self, ray, depth=0):
         # Find nearest intersection for ray, compute reflected ray and call recursively
         # with depth += 1 until depth == max_depth or no intersection is found.
@@ -45,7 +54,14 @@ class Renderer:
             return color
         point = ray.origin + ray.dir * dist
         normal = obj.get_normal(point)
-        color += obj.material.get_color(point, normal, self.scene.cam, self.scene.light)
+        lights = []
+        for light in self.scene.lights:
+            dist = math.inf
+            if type(light) == scene.point_light.PointLight:
+                dist = np.linalg.norm(point - light.pos)
+            if not self.is_blocked(point + normal * 1e-4, light, dist):
+                lights.append(light)
+        color += obj.material.get_color(point, normal, self.scene.cam, lights)
         if depth < self.max_depth:
             color += self.ray_trace(Ray(point + normal * 1e-4, None, ray.dir - 2 * np.dot(ray.dir, normal) * normal),
                                     depth + 1) * obj.material.ref

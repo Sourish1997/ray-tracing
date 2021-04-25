@@ -1,5 +1,5 @@
 class Scene:
-    def __init__(self, cam, light, objects):
+    def __init__(self, cam, lights, objects):
         self.cam = cam
-        self.light = light
+        self.lights = lights
         self.objects = objects

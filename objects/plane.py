@@ -11,10 +11,10 @@ class Plane(Object):
 
     def get_intersection(self, ray):
         # Returns distance from ray origin
-        n_dot_l = np.dot(self.get_normal(0), ray.dir)
+        n_dot_l = np.dot(self.get_normal(0), -ray.dir)
 
         if n_dot_l > 1e-6:
-            t = np.dot(np.subtract(self.point0, ray.origin), self.get_normal(0)) / n_dot_l
+            t = np.dot(ray.origin - self.point0, self.get_normal(0)) / n_dot_l
             return t if t >= 0 else None
 
         return None
