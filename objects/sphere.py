@@ -3,9 +3,9 @@ from .object import Object
 
 
 class Sphere(Object):
-    def __init__(self, center, radius, **kwargs):
-        super().__init__(**kwargs)
-        self.center = center
+    def __init__(self, center, radius, material):
+        super().__init__(material)
+        self.center = np.array(center)
         self.radius = radius
 
     def get_intersection(self, ray):

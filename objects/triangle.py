@@ -4,12 +4,12 @@ import numpy as np
 
 
 class Triangle(Object):
-    def __init__(self, v0, v1, v2, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, v0, v1, v2, material):
+        super().__init__(material)
         # Vertices of the triangle:
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
+        self.v0 = np.array(v0)
+        self.v1 = np.array(v1)
+        self.v2 = np.array(v2)
         # Getting the normal, cross v1 - v0 and v2 - v0:
         self.a = np.subtract(v1, v0)
         self.b = np.subtract(v2, v0)

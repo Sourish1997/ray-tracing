@@ -9,7 +9,6 @@ from objects.plane import Plane
 from objects.triangle import Triangle
 # from objects.cone import Cone
 from materials.base_material import BaseMaterial
-import numpy as np
 import json
 
 
@@ -28,40 +27,39 @@ def parse_scene_json(scene_json):
     lights = []
     for i in range(len(scene['lights'])):
         if scene['lights'][i]['type'] == 'point':
-            lights.append(PointLight(**scene["lights"][i]))
+            lights.append(PointLight(**scene['lights'][i]))
         elif scene['lights'][i]['type'] == 'directional':
-            lights.append(DirLight(**scene["lights"][i]))
+            lights.append(DirLight(**scene['lights'][i]))
 
     objects = []
     for obj in scene['shapes']:
-        prop = obj["material"]
-        mat = {"material": BaseMaterial(**prop)}
-        geom_params = obj["geomParams"]
-        if obj["geometry"] == "sphere":
-            scene_obj = Sphere(np.array(geom_params["center"]), geom_params["radius"], **mat)
-        elif obj["geometry"] == "cylinder":
-            scene_obj = Cylinder(np.array(geom_params["center"]), geom_params["radius"], geom_params["h"], geom_params["v"], **mat)
-        elif obj["geometry"] == "plane":
-            scene_obj = Plane(np.array(geom_params["point0"]), np.array(geom_params["normal"]), **mat)
-        elif obj["geometry"] == "triangle":
-            scene_obj = Triangle(np.array(geom_params["v0"]), np.array(geom_params["v1"]), np.array(geom_params["v2"]), **mat)
-        # elif obj["geometry"] == "cone":
-        #     scene_obj = Cone(np.array(geom_params["pA"]), np.array(geom_params["p1"]), geom_params["r1"], **mat)
+        kwargs = obj['geomParams']
+        kwargs.update({'material': BaseMaterial(**obj['material'])})
+        if obj['geometry'] == 'sphere':
+            scene_obj = Sphere(**kwargs)
+        elif obj['geometry'] == 'cylinder':
+            scene_obj = Cylinder(**kwargs)
+        elif obj['geometry'] == 'plane':
+            scene_obj = Plane(**kwargs)
+        elif obj['geometry'] == 'triangle':
+            scene_obj = Triangle(**kwargs)
+        # elif obj['geometry'] == 'cone':
+        #     scene_obj = Cone(np.array(geom_params['pA']), np.array(geom_params['p1']), geom_params['r1'], **mat)
         objects.append(scene_obj)
     return Scene(cam, lights, objects)
 
 
 def main():
     # Create a scene object
-    scene = parse_scene_json("scene.json")
+    scene = parse_scene_json('scene.json')
 
     # Create a renderer object with scene passed as param
     renderer = Renderer(scene, 3)
 
-    # Call the renderer"s render function
+    # Call the renderer's render function
     im = renderer.render()
-    im.save("img.png")
+    im.save('img.png')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

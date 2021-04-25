@@ -4,8 +4,13 @@ import math
 
 
 class BaseMaterial(Material):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, col, amb, dif, spec, ref, n):
+        super().__init__(amb)
+        self.col = np.array(col)
+        self.dif = dif
+        self.spec = spec
+        self.ref = ref
+        self.n = n
 
     def get_color(self, point, normal, camera, lights):
         c_rgb = np.zeros(3)

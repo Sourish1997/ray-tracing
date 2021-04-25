@@ -4,10 +4,10 @@ import numpy as np
 
 
 class Plane(Object):
-    def __init__(self, point0, normal, **kwargs):
-        super().__init__(**kwargs)
-        self.point0 = point0
-        self.normal = normal
+    def __init__(self, point0, normal, material):
+        super().__init__(material)
+        self.point0 = np.array(point0)
+        self.normal = np.array(normal) / np.linalg.norm(normal)
 
     def get_intersection(self, ray):
         # Returns distance from ray origin

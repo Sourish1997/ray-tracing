@@ -6,12 +6,12 @@ import numpy as np
 class Cylinder(Object):
     # c = center, r = radius, h = height, v = axis direction vector
     # Cylinder equation: (q - c - v.(q - c)v)^2 - r^2 = 0
-    def __init__(self, c, r, h, v, **kwargs):
-        super().__init__(**kwargs)
-        self.c = c
-        self.r = r
+    def __init__(self, center, radius, h, v, material):
+        super().__init__(material)
+        self.c = np.array(center)
+        self.r = radius
         self.h = h
-        self.v = v / np.linalg.norm(v)
+        self.v = np.array(v) / np.linalg.norm(np.array(v))
 
     def get_intersection(self, ray):
         # Implement intersection math
