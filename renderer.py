@@ -45,6 +45,26 @@ class Renderer:
                 return True
         return False
 
+    """
+
+    https://www.gamedev.net/tutorials/programming/graphics/a-simple-and-practical-approach-to-ssao-r2753/
+
+
+    tcoord: normal texture
+    uv: value of uv
+    p: position of uv
+    cnorm: normal of uv
+    g_scale: scales distance between occluders and occludee.
+    g_intensity: the ao intensity. Once you tweak the values a bit and see how the AO reacts to them, it becomes very intuitive to achieve the effect you want.
+    g_bias: controls the width of the occlusion cone considered by the occludee.
+
+    """
+    def doAmbientOcclusion(self, tcoord, uv, p, cnorm):
+        diff = getPosition(tcoord + uv) - p
+        v = normalize(diff)
+        d = len(diff)*g_scale
+        return max(0.0,np.dot(cnorm,v)-g_bias)*(1.0/(1.0+d))*g_intensity
+    
     def ray_trace(self, ray, depth=0):
         # Find nearest intersection for ray, compute reflected ray and call recursively
         # with depth += 1 until depth == max_depth or no intersection is found.
