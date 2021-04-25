@@ -16,11 +16,12 @@ class BaseMaterial(Material):
             # Lambertian shading for Diffuse:
             n_dot_l = np.dot(light[i].pos / np.linalg.norm(light[i].pos), normal)
 
-            # specularity
-            r = -1 * light[i].pos / np.linalg.norm(light[i].pos) + 2 * n_dot_l * normal
-            h = (light[i].pos + np.array(camera.v2 - point)) / np.linalg.norm((light[i].pos + np.array(camera.v2 - point)))
+            # Specular shading
+            v = (camera.cam_from - point) / np.linalg.norm((camera.cam_from - point))
+            h = (-light[i].get_dir(point) + v) / np.linalg.norm(-light[i].get_dir(point) + v)
             n_dot_h = np.dot(h, normal)
 
-            c_rgb += light[i].col * self.col * (self.dif * max(0, n_dot_l) + (light[i].intensity * self.spec * pow(max(0, n_dot_h), self.n)))
+            c_rgb += (light[i].col * light[i].get_intensity(point)) * \
+                     ((self.col * self.dif * max(0, n_dot_l) / math.pi) + (self.spec * pow(max(0, n_dot_h), self.n)))
 
         return c_rgb

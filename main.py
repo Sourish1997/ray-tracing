@@ -1,12 +1,12 @@
 from scene.camera import Camera
-from scene.light import Light
+from scene.point_light import PointLight
+from scene.dir_light import DirLight
 from scene.scene import Scene
 from renderer import Renderer
 from objects.sphere import Sphere
 from objects.cylinder import Cylinder
 from materials.base_material import BaseMaterial
 import numpy as np
-import math
 import json
 
 
@@ -16,26 +16,21 @@ def parse_scene_json(scene_json):
     Returns: Scene obj to render
     """
 
-    with open(scene_json, "r") as scene_des:
-        scene = json.loads(scene_des.read())["scene"]
+    with open(scene_json, 'r') as scene_des:
+        scene = json.loads(scene_des.read())['scene']
 
-    # objs, lights, camera = scene["shapes"], scene["lights"], scene["camera"]
-    # camera
-    width, height = scene["camera"]["resolution"]
-    cam_from = np.array(scene["camera"]["from"])
-    cam_to = np.array(scene["camera"]["to"])
-    u = np.array(scene["camera"]["u"])
-    v = np.array(scene["camera"]["v"])
-    fov = math.pi / scene["camera"]["fov"]
-    cam = Camera(cam_from, cam_to, u, v, fov, width, height)
+    # objects, lights, camera = scene['shapes'], scene['lights'], scene['camera']
+    cam = Camera(**scene['camera'])
 
-    # TODO: light (only support for point lights rn, requires refactoring of light.py)
-    light = []
-    for i in range(len(scene["lights"])):
-        light.append(Light(**scene["lights"][i]))
+    lights = []
+    for i in range(len(scene['lights'])):
+        if scene['lights'][i]['type'] == 'point':
+            lights.append(PointLight(**scene["lights"][i]))
+        elif scene['lights'][i]['type'] == 'directional':
+            lights.append(DirLight(**scene["lights"][i]))
 
     objects = []
-    for obj in scene["shapes"]:
+    for obj in scene['shapes']:
         prop = obj["material"]
         mat = {"material": BaseMaterial(**prop)}
         geom_params = obj["geomParams"]
@@ -44,7 +39,7 @@ def parse_scene_json(scene_json):
         elif obj["geometry"] == "cylinder":
             scene_obj = Cylinder(np.array(geom_params["center"]), geom_params["radius"], geom_params["h"], geom_params["v"], **mat)
         objects.append(scene_obj)
-    return Scene(cam, light, objects)
+    return Scene(cam, lights, objects)
 
 
 def main():
