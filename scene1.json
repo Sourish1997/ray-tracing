@@ -1,0 +1,131 @@
+{
+  "scene":{
+    "shapes":[
+      {
+        "id":"plane1",
+        "notes":"",
+        "geometry":"plane",
+        "material":{
+          "col":[
+            0.75,
+            0.75,
+            0.75
+          ],
+          "amb":0.5,
+          "dif":0.75,
+          "spec":0,
+          "n":2.0,
+          "ref": 0.2
+        },
+        "geomParams": {
+          "point0": [2, 6, 3],
+          "normal": [0, 1, 0]
+        }
+      },
+      {
+        "id":"cylinder1",
+        "notes":"",
+        "geometry":"cylinder",
+        "material":{
+          "col":[
+            0,
+            0,
+            1
+          ],
+          "amb":0.5,
+          "dif":0.75,
+          "spec":0.9,
+          "n":2.0,
+          "ref": 0.2
+        },
+        "geomParams": {
+          "center": [2, 0, 6],
+          "radius": 2,
+          "h": 12,
+          "v": [0, 1, 0]
+        }
+      },
+      {
+        "id":"triangle1",
+        "notes":"",
+        "geometry":"triangle",
+        "material":{
+          "col":[
+            1,
+            1,
+            0
+          ],
+          "amb":0.35,
+          "dif":0.5,
+          "spec":0.9,
+          "n":5.0,
+          "ref": 0.4
+        },
+        "geomParams": {
+          "v0": [0, 6, 6],
+          "v1": [0, -7, 6],
+          "v2": [-5, 0, 3]
+        }
+      }
+    ],
+    "lights":[
+      {
+        "id":"L1",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":0.6,
+        "pos":[
+          6,
+          -6,
+          -6
+        ]
+      },
+      {
+        "id":"L2",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":0.5,
+        "pos":[
+          0,
+          4,
+          -2
+        ]
+      }
+    ],
+    "camera":{
+      "from":[
+        2,
+        -4,
+        -8
+      ],
+      "to":[
+        2,
+        -3,
+        -6
+      ],
+      "u":[
+        2,
+        0,
+        0
+      ],
+      "v":[
+        0,
+        2,
+        -1
+      ],
+      "fov": 3,
+      "resolution":[
+        512,
+        512
+      ]
+    }
+  }
+}
