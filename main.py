@@ -57,7 +57,7 @@ def main():
     renderer = Renderer(scene, 3)
 
     # Call the renderer's render function
-    im = renderer.render()
+    im = renderer.render(8)
     im.save('img.png')
 
 

@@ -1,7 +1,10 @@
 import numpy as np
 import math
-from PIL import Image
+import os
+from PIL import Image, ImageChops
 from scene.ray import Ray
+from utils import progress, split_range
+from multiprocessing import Process
 import scene
 
 
@@ -10,7 +13,16 @@ class Renderer:
         self.scene = scene
         self.max_depth = max_depth
 
-    def render(self):
+    def render_part(self, cam, top_left, increment, start, end, im, name):
+        for i in range(start, end):
+            for j in range(cam.height):
+                point = top_left + (i * increment * cam.u) + (j * increment * cam.v)
+                color = self.ray_trace(Ray(cam.cam_from, point))
+                im.putpixel((i, j), tuple((color * 255).astype(np.int64)))
+                progress((i - start) * cam.height + j, (end - start) * cam.height)
+        im.save(name)
+
+    def render(self, process_count):
         # Call ray trace for each pixel in image
         cam = self.scene.cam
         cam_to_screen = np.linalg.norm(cam.cam_to - cam.cam_from)
@@ -19,12 +31,22 @@ class Renderer:
         increment = screen_width / cam.width
         top_left = cam.cam_to - ((screen_width / 2) * cam.u) - ((screen_height / 2) * cam.v)
 
+        ranges = split_range(cam.width, process_count)
+        processes = []
+        for i, (start, end) in enumerate(ranges):
+            im = Image.new('RGB', (cam.width, cam.height))
+            process = Process(target=self.render_part,
+                              args=(cam, top_left, increment, start, end, im, 'tmp_' + str(i) + '.png'))
+            processes.append(process)
+            process.start()
+        for process in processes:
+            process.join()
+
         im = Image.new('RGB', (cam.width, cam.height))
-        for i in range(cam.width):
-            for j in range(cam.height):
-                point = top_left + (i * increment * cam.u) + (j * increment * cam.v)
-                color = self.ray_trace(Ray(cam.cam_from, point))
-                im.putpixel((i, j), tuple((color * 255).astype(np.int64)))
+        for i in range(process_count):
+            im_tmp = Image.open('tmp_' + str(i) + '.png')
+            im = ImageChops.add(im, im_tmp)
+            os.remove('tmp_' + str(i) + '.png')
         return im
 
     def find_nearest_hit(self, ray):
