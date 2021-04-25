@@ -46,10 +46,16 @@ class Renderer:
         return False
 
     """
+    TODO: Ambient Occlusion
 
+    Useful References:
+    ------------------
     https://www.gamedev.net/tutorials/programming/graphics/a-simple-and-practical-approach-to-ssao-r2753/
 
+    https://www.davepagurek.com/blog/realtime-shadows/
 
+    Variables:
+    ---------
     tcoord: normal texture
     uv: value of uv
     p: position of uv
