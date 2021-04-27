@@ -1,0 +1,88 @@
+{
+  "scene":{
+    "shapes":[
+      {
+        "id":"cone1",
+        "notes":"",
+        "geometry":"cone",
+        "material":{
+          "mat_type": "base",
+          "col":[
+            1,
+            1,
+            0
+          ],
+          "amb":0.35,
+          "dif":0.5,
+          "spec":0.9,
+          "n":5.0,
+          "ref": 0.4
+        },
+        "geomParams": {
+          "pa": [0, 6, 6],
+          "p1": [0, -4, 6],
+          "r1": 2
+        }
+      }
+    ],
+    "lights":[
+      {
+        "id":"L1",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":0.6,
+        "pos":[
+          6,
+          -6,
+          -6
+        ]
+      },
+      {
+        "id":"L2",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":0.5,
+        "pos":[
+          0,
+          4,
+          -2
+        ]
+      }
+    ],
+    "camera":{
+      "from":[
+        2,
+        -4,
+        -8
+      ],
+      "to":[
+        2,
+        -3,
+        -6
+      ],
+      "u":[
+        2,
+        0,
+        0
+      ],
+      "v":[
+        0,
+        2,
+        -1
+      ],
+      "fov": 3,
+      "resolution":[
+        512,
+        512
+      ]
+    }
+  }
+}

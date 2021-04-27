@@ -3,7 +3,10 @@ import math
 import os
 from PIL import Image, ImageChops
 from scene.ray import Ray
-from utils import progress, split_range
+from utils import progress, split_range, reflect, refract, fresnel
+from materials.transmissive import Transmissive
+from scene.point_light import PointLight
+# import tqdm
 from multiprocessing import Process
 import scene
 
@@ -12,6 +15,7 @@ class Renderer:
     def __init__(self, scene, max_depth):
         self.scene = scene
         self.max_depth = max_depth
+        self.bias = 1e-4
 
     def render_part(self, cam, top_left, increment, start, end, im, name):
         for i in range(start, end):
@@ -62,36 +66,12 @@ class Renderer:
     def is_blocked(self, point, light, dist):
         ray = Ray(point, None, -light.get_dir(point))
         for obj in self.scene.objects:
+            if type(obj.material) is Transmissive:
+                continue
             hit_dist = obj.get_intersection(ray)
             if hit_dist is not None and hit_dist < dist:
                 return True
         return False
-
-    """
-    TODO: Ambient Occlusion
-
-    Useful References:
-    ------------------
-    https://www.gamedev.net/tutorials/programming/graphics/a-simple-and-practical-approach-to-ssao-r2753/
-
-    https://www.davepagurek.com/blog/realtime-shadows/
-
-    Variables:
-    ---------
-    tcoord: normal texture
-    uv: value of uv
-    p: position of uv
-    cnorm: normal of uv
-    g_scale: scales distance between occluders and occludee.
-    g_intensity: the ao intensity. Once you tweak the values a bit and see how the AO reacts to them, it becomes very intuitive to achieve the effect you want.
-    g_bias: controls the width of the occlusion cone considered by the occludee.
-
-    """
-    def doAmbientOcclusion(self, tcoord, uv, p, cnorm):
-        diff = getPosition(tcoord + uv) - p
-        v = normalize(diff)
-        d = len(diff)*g_scale
-        return max(0.0,np.dot(cnorm,v)-g_bias)*(1.0/(1.0+d))*g_intensity
     
     def ray_trace(self, ray, depth=0):
         # Find nearest intersection for ray, compute reflected ray and call recursively
@@ -107,10 +87,27 @@ class Renderer:
             dist = math.inf
             if type(light) == scene.point_light.PointLight:
                 dist = np.linalg.norm(point - light.pos)
-            if not self.is_blocked(point + normal * 1e-4, light, dist):
+            if not self.is_blocked(point + normal * self.bias, light, dist):
                 lights.append(light)
-        color += obj.material.get_color(point, normal, self.scene.cam, lights)
         if depth < self.max_depth:
-            color += self.ray_trace(Ray(point + normal * 1e-4, None, ray.dir - 2 * np.dot(ray.dir, normal) * normal),
-                                    depth + 1) * obj.material.ref
+            if type(obj.material) is not Transmissive:
+                color += obj.material.get_color(point, normal, self.scene.cam, lights)
+                # color += self.ray_trace(Ray(point + normal * self.bias, None, ray.dir - 2 * np.dot(ray.dir, normal) * normal), depth + 1) * obj.material.ref
+                color += self.ray_trace(Ray(point + normal * self.bias, None, reflect(ray.dir, normal)), depth + 1) * obj.material.ref
+            else:
+                kr = fresnel(ray.dir, normal, obj.material.ior)
+                color += obj.material.get_color(point, normal, self.scene.cam, lights, kr)
+                outside = np.dot(ray.dir, normal) < 0
+                bias = self.bias * normal
+                refractionColor = np.zeros(3)
+                if kr < 1:
+                    if outside:
+                        refractionOrig = point - bias
+                    else:
+                        refractionOrig = point + bias
+                    refractionDir = refract(ray.dir, normal, obj.material.ior)
+                    refractionColor = self.ray_trace(Ray(refractionOrig, None, refractionDir), depth + 1)
+                reflectionDir = reflect(ray.dir, normal)
+                reflectionColor = self.ray_trace(Ray(point + bias, None, reflectionDir), depth + 1)
+                color += (reflectionColor * kr + refractionColor * (1 - kr))
         return color

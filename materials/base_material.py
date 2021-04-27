@@ -4,7 +4,7 @@ import math
 
 
 class BaseMaterial(Material):
-    def __init__(self, col, amb, dif, spec, ref, n):
+    def __init__(self, col, amb, dif, spec, ref, n, **kwargs):
         super().__init__(amb)
         self.col = np.array(col)
         self.dif = dif
