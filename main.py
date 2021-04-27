@@ -7,7 +7,7 @@ from objects.sphere import Sphere
 from objects.cylinder import Cylinder
 from objects.plane import Plane
 from objects.triangle import Triangle
-# from objects.cone import Cone
+from objects.cone import Cone
 from materials.base_material import BaseMaterial
 import json
 
@@ -44,21 +44,21 @@ def parse_scene_json(scene_json):
         elif obj['geometry'] == 'triangle':
             scene_obj = Triangle(**kwargs)
         # elif obj['geometry'] == 'cone':
-        #     scene_obj = Cone(np.array(geom_params['pA']), np.array(geom_params['p1']), geom_params['r1'], **mat)
+        #     scene_obj = Cone(**kwargs)
         objects.append(scene_obj)
     return Scene(cam, lights, objects)
 
 
 def main():
     # Create a scene object
-    scene = parse_scene_json('scene.json')
+    scene = parse_scene_json('scene1.json')
 
     # Create a renderer object with scene passed as param
     renderer = Renderer(scene, 3)
 
     # Call the renderer's render function
     im = renderer.render(8)
-    im.save('img.png')
+    im.save('img4.png')
 
 
 if __name__ == '__main__':
