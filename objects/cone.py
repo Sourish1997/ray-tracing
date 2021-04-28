@@ -6,69 +6,57 @@ import numpy as np
 class Cone(Object):
     def __init__(self, pa, p1, r1, material):
         super().__init__(material)
-        self.base_p = np.array(pa)
-        self.p1 = p1
-
-        # self.base_p = base_p / np.linalg.norm(base_p)
-        # self.axis_v = axis_v
-
-        # self.axis_v_normalized = axis_v / np.linalg.norm(self.axis_v)
-        # self.axis_v = axis_v / np.linalg.norm(axis_v)
-
-        self.h = np.linalg.norm(np.subtract(pa, p1))
-        self.axis_v = np.subtract(pa, p1) / self.h
-        self.v = self.axis_v
+        self.p1 = np.array(p1)
+        self.center = self.p1
+        self.pa = np.array(pa)
+        # right now va is hard coded for upright cone only, TODO refactor for any va 
+        self.va = (np.array([0, 1, 0]) + self.pa - self.p1) / np.linalg.norm(np.array([0, 1, 0]) + self.pa - self.p1)
         self.r1 = r1
-        self.h_angle = np.arctan(r1 / self.h)
+        self.h = np.linalg.norm(np.abs(np.subtract(self.pa, p1)))
+        self.alpha = np.arctan(r1 / self.h)
+
+        # self.pa = self.p1 + self.r1 * (self.p2 - self.p1) / (self.r1 - self.r2)
+        # self.va = (self.p2 - self.p1) / np.linalg.norm(self.p2 - self.p1)
+        # self.alpha = (self.r1 - self.r2) / np.linalg.norm(self.p2 - self.p1)
 
         print("height of the cone: {}".format(self.h))
-        print("angle: {}".format(self.h_angle))
-        print("pA: {}".format(self.base_p))
-        print("p1: {}".format(self.p1))
-        print("pV: {}".format(self.axis_v))
+        print("angle: {}".format(self.alpha))
+        print("pA: {}".format(self.pa))
+        print("p1: {}".format(self.center))
+        # print("p2: {}".format(self.p2))
+        print("pV: {}".format(self.va))
 
     def get_intersection(self, ray):
-        dp = np.subtract(ray.origin, self.base_p)
-        v = ray.dir
-
         p = ray.origin
-        d = ray.dir
+        v = ray.dir
+        p_delta = p - self.pa
 
-        v_dot_va = np.dot(v, self.axis_v)
-        dp_dot_va = np.dot(dp, self.axis_v)
+        v_dot_va = np.dot(v, self.va)
+        dp_dot_va = np.dot(p_delta, self.va)
+        v_sub_dot = v - v_dot_va * self.va
+        dp_sub_dot = p_delta - dp_dot_va * self.va
+        cos_sq = math.cos(self.alpha) ** 2
+        sin_sq = math.sin(self.alpha) ** 2
 
-        v_sub_dot = v - v_dot_va * self.axis_v
-        dp_sub_dot = dp - dp_dot_va * self.axis_v
-
-        # One method:(PDF shared on Slack):
-
-        a = pow(math.cos(self.h_angle * np.dot(v_sub_dot, v_sub_dot)), 2) - pow(math.sin(self.h_angle * (v_dot_va ** 2)), 2)
-        b = 2 * pow(math.cos(self.h_angle * np.dot(v_sub_dot, dp_sub_dot)), 2) - 2 * pow(math.sin(self.h_angle * v_dot_va * dp_dot_va), 2)
-        c = pow(math.cos(self.h_angle * np.dot(dp_sub_dot, dp_sub_dot)), 2) - pow(math.sin(self.h_angle * (dp_dot_va ** 2)), 2)
-
-
-        # Alternative method: https://lousodrome.net/blog/light/2017/01/03/intersection-of-a-ray-and-a-cone/
-
-        # a = pow(np.dot(self.v, d), 2) - pow(math.cos(self.h_angle), 2)
-        # b = 2 * (np.dot(self.v, d) * np.dot((np.subtract(self.base_p, p)), self.v) - np.dot(d, np.subtract(self.base_p, p)) * pow(math.cos(self.h_angle), 2))
-        # c = pow(np.dot((np.subtract(self.base_p, p)), self.v), 2) - np.dot(np.subtract(self.base_p, p),np.subtract(self.base_p, p)) * pow(math.cos(self.h_angle), 2)
-
+        a = cos_sq * np.dot(v_sub_dot, v_sub_dot) - sin_sq * (v_dot_va ** 2)
+        b = 2 * cos_sq * np.dot(v_sub_dot, dp_sub_dot) - 2 * sin_sq * v_dot_va * dp_dot_va
+        c = cos_sq * np.dot(dp_sub_dot, dp_sub_dot) - sin_sq * (dp_dot_va ** 2)
         disc = b ** 2 - 4 * a * c
 
         if disc < 0:
-
             return None
         else:
-
             hit = min((-b - math.sqrt(disc)) / (2 * a), (-b + math.sqrt(disc)) / (2 * a))
-
             if hit <= 0:
-
                 return None
 
-            return hit
+            cp = p + hit * ray.dir - self.pa
+            hit_h = np.dot(cp, self.va)
+            if hit_h < 0 or hit_h > self.h:
+                return None
 
-    #
+        return hit
+
     def get_normal(self, point):
 
         # Generating normal: https://stackoverflow.com/questions/66343772/cone-normal-vector
@@ -79,6 +67,6 @@ class Cone(Object):
         # return np.subtract(point, a) / np.linalg.norm(np.subtract(point, a))
 
         # Alternative test method for generating normal:
-        v = np.subtract(point, self.base_p) * (self.h / self.r1) / np.linalg.norm(np.subtract(point, self.base_p))
+        v = np.subtract(point, self.center) * (self.h / self.r1) / np.linalg.norm(np.subtract(point, self.center))
 
         return v / np.linalg.norm(v)
