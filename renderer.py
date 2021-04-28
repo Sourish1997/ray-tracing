@@ -11,11 +11,12 @@ import scene
 
 
 class Renderer:
-    def __init__(self, scene, max_depth, max_rays=100):
+    def __init__(self, scene, max_depth, max_rays=100, k_a=0.1):
         self.scene = scene
         self.max_depth = max_depth
         self.bias = 1e-4
         self.max_rays = max_rays
+        self.k_a = k_a
 
     def render_part(self, cam, top_left, increment, start, end, im, o_im, path, name):
         for i in range(start, end):
@@ -69,7 +70,7 @@ class Renderer:
                 o_im_tmp = Image.open('otmp' + str(i) + '.png')
                 o_im = ImageChops.add(o_im, o_im_tmp)
                 os.remove('otmp' + str(i) + '.png')
-            f_im = ImageChops.add(im, o_im)
+            f_im = ImageChops.add(im, Image.fromarray(np.uint8(self.k_a * np.array(o_im))))
         return im, o_im, f_im
 
     def find_nearest_hit(self, ray):

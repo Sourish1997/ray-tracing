@@ -69,7 +69,7 @@ def main():
     im, o_im, f_im = renderer.render(8, True)
     im.save('img.png')
     o_im.save('o_img.png')  # Comment this out if you pass False as the occlusion parameter to renderer()
-    f_im.save('f_img.png') # Comment this out if you pass False as the occlusion parameter to renderer()
+    f_im.save('f_img.png')  # Comment this out if you pass False as the occlusion parameter to renderer()
 
 
 if __name__ == '__main__':
