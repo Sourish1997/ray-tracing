@@ -46,7 +46,17 @@ class Cone(Object):
         if disc < 0:
             return None
         else:
-            hit = min((-b - math.sqrt(disc)) / (2 * a), (-b + math.sqrt(disc)) / (2 * a))
+            t1 = (-b - math.sqrt(disc)) / (2 * a)
+            t2 = (-b + math.sqrt(disc)) / (2 * a)
+            if t1 < 0 and t2 > 0:
+                hit = t2
+            elif t1 > 0 and t2 > 0:
+                hit = min(t1, t2)
+            elif t1 > 0 and t2 < 0:
+                hit = t1
+            else:
+                return None
+
             if hit <= 0:
                 return None
 
@@ -58,15 +68,6 @@ class Cone(Object):
         return hit
 
     def get_normal(self, point):
-
-        # Generating normal: https://stackoverflow.com/questions/66343772/cone-normal-vector
-        # d = np.subtract(self.base_p, point) * math.sqrt(1 + pow(math.tan(self.h_angle), 2))
-        #
-        # a = self.base_p + (self.axis_v * d)
-        #
-        # return np.subtract(point, a) / np.linalg.norm(np.subtract(point, a))
-
-        # Alternative test method for generating normal:
-        v = np.subtract(point, self.center) * (self.h / self.r1) / np.linalg.norm(np.subtract(point, self.center))
-
-        return v / np.linalg.norm(v)
+        r = np.sqrt( np.square(point[0] - self.center[0]) + np.square(point[2] - self.center[2]) )
+        n = np.array([2 * (point[0] - self.center[0]), r * (self.r1 / self.h), 2 * (point[2] - self.center[2])])
+        return n / np.linalg.norm(n)
