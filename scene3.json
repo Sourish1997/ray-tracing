@@ -1,0 +1,171 @@
+{
+  "scene":{
+    "shapes":[
+      {
+        "id":"cylinder1",
+        "notes":"",
+        "geometry":"cylinder",
+        "mat_type": "path_blinn",
+        "material":{
+          "col":[
+            0,
+            0,
+            1
+          ],
+          "amb":0.5,
+          "dif":[0.8, 0.8, 0.8],
+          "spec":[0.18, 0.18, 0.18],
+          "n":50.0
+        },
+        "geomParams": {
+          "center": [2, 0, 6],
+          "radius": 2,
+          "h": 12,
+          "v": [0, 1, 0]
+        }
+      },
+      {
+        "id":"plane1",
+        "notes":"",
+        "geometry":"plane",
+        "mat_type": "path_blinn",
+        "material":{
+          "col":[
+            1,
+            1,
+            0
+          ],
+          "amb":0.5,
+          "dif":[0.8, 0.8, 0.8],
+          "spec":[0.18, 0.18, 0.18],
+          "n":50.0
+        },
+        "geomParams": {
+          "point0": [0, 6, 0],
+          "normal": [0, -1, 0]
+        }
+      },
+      {
+        "id":"sphere1",
+        "notes":"no scaling",
+        "geometry":"sphere",
+        "mat_type": "path_blinn",
+        "material":{
+          "col":[
+            1,
+            0,
+            0
+          ],
+          "amb":0.35,
+          "dif":[0.8, 0.8, 0.8],
+          "spec":[0.18, 0.18, 0.18],
+          "n":50.0
+        },
+        "geomParams": {
+          "center": [0, 0, 0],
+          "radius": 2
+        }
+      },
+      {
+        "id":"sphere2",
+        "notes":"",
+        "geometry":"sphere",
+        "mat_type": "path_blinn",
+        "material":{
+          "col":[
+            0,
+            1,
+            0
+          ],
+          "amb":0.15,
+          "dif":[0.8, 0.8, 0.8],
+          "spec":[0.18, 0.18, 0.18],
+          "n":50.0
+        },
+        "geomParams": {
+          "center": [4, -3, -1],
+          "radius": 1
+        }
+      }
+    ],
+    "lights":[
+      {
+        "id":"L1",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":200,
+        "pos":[
+          6,
+          -6,
+          -6
+        ]
+      },
+      {
+        "id":"L2",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":200,
+        "pos":[
+          0,
+          4,
+          -2
+        ]
+      },
+      {
+        "id":"L3",
+        "type":"directional",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":0.6,
+        "from":[
+          -8,
+          -8,
+          8
+        ],
+        "to":[
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "camera":{
+      "from":[
+        2,
+        -4,
+        -8
+      ],
+      "to":[
+        2,
+        -3,
+        -6
+      ],
+      "u":[
+        2,
+        0,
+        0
+      ],
+      "v":[
+        0,
+        2,
+        -1
+      ],
+      "fov": 3,
+      "resolution":[
+        128,
+        128
+      ]
+    }
+  }
+}
