@@ -17,42 +17,29 @@ def split_range(count, parts):
         (i * d + min(i, r), (i + 1) * d + min(i + 1, r)) for i in range(parts)
     ]
 
+
 def clamp(low, high, val):
     return min(max(low, val), high)
 
-def reflect(I, N):
-    return I - 2 * np.dot(N, I) * N
 
-def refract(I, N, ior):
-    cosi = clamp(-1, 1, np.dot(N, I))
-    etai = 1
-    etat = ior
-    n = N
-    if cosi < 0:
-        cosi = -cosi
+def reflect(i, n):
+    return i - 2 * np.dot(n, i) * n
+
+
+def refract(i, n, ior):
+    cos_i = clamp(-1, 1, np.dot(n, i))
+    eta_i = 1
+    eta_t = ior
+    n = n
+    if cos_i < 0:
+        cos_i = -cos_i
     else:
-        etai, etat = etat, etai
+        eta_i, eta_t = eta_t, eta_i
         n = -n
-    eta = etai / etat
-    k = 1 - eta * eta * (1 - cosi * cosi)
+    eta = eta_i / eta_t
+    k = 1 - eta * eta * (1 - cos_i * cos_i)
     if k < 0:
         return 0
     else:
-        return eta * I + (eta * cosi - np.sqrt(k)) * n
+        return eta * i + (eta * cos_i - np.sqrt(k)) * n
 
-def fresnel(I, N, ior):
-    cosi = clamp(-1, 1, np.dot(I, N))
-    etai = 1
-    etat = ior
-    if cosi > 0:
-        etai, etat = etat, etai
-    sint = etai / etat * np.sqrt(max(0., 1 - cosi * cosi))
-    if sint >= 1:
-        kr = 1
-    else:
-        cost = np.sqrt(max(0., 1 - sint * sint))
-        cosi = np.abs(cosi)
-        Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost))
-        Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost))
-        kr = (Rs * Rs + Rp * Rp) / 2
-    return kr

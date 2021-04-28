@@ -5,6 +5,7 @@
         "id":"cylinder1",
         "notes":"",
         "geometry":"cylinder",
+        "mat_type": "base",
         "material":{
           "col":[
             0,
@@ -28,6 +29,7 @@
         "id":"plane1",
         "notes":"",
         "geometry":"plane",
+        "mat_type": "base",
         "material":{
           "col":[
             0.75,
@@ -49,6 +51,7 @@
         "id":"triangle1",
         "notes":"",
         "geometry":"triangle",
+        "mat_type": "base",
         "material":{
           "col":[
             1,

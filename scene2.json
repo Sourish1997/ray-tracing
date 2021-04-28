@@ -3,10 +3,9 @@
     "shapes":[
       {
         "id":"plane1",
-        "notes":"",
         "geometry":"plane",
+        "mat_type": "base",
         "material":{
-          "mat_type": "base",
           "col":[
             1,
             1,
@@ -24,21 +23,36 @@
         }
       },
       {
-        "id":"sphere1",
-        "notes":"no scaling",
-        "geometry":"sphere",
+        "id":"cylinder1",
+        "notes":"",
+        "geometry":"cylinder",
+        "mat_type": "base",
         "material":{
-          "mat_type": "base",
           "col":[
-            1,
             0,
-            0
+            0,
+            1
           ],
-          "amb":0.35,
-          "dif":0.9,
-          "spec":0.3,
+          "amb":0.5,
+          "dif":0.8,
+          "spec":0.18,
           "n":50.0,
-          "ref": 0.4
+          "ref": 0.3
+        },
+        "geomParams": {
+          "center": [2, 0, 6],
+          "radius": 2,
+          "h": 12,
+          "v": [0, 1, 0]
+        }
+      },
+      {
+        "id":"sphere1",
+        "geometry":"sphere",
+        "mat_type": "transmissive",
+        "material":{
+          "amb":1,
+          "ior": 1.5
         },
         "geomParams": {
           "center": [4, 0, 2],
@@ -49,18 +63,9 @@
         "id":"sphere2",
         "notes":"",
         "geometry":"sphere",
+        "mat_type": "transmissive",
         "material":{
-          "mat_type": "glass",
-          "col":[
-            0,
-            1,
-            0
-          ],
           "amb":1,
-          "dif":0.8,
-          "spec":0.18,
-          "n":50.0,
-          "ref": 0.4,
           "ior": 1.5
         },
         "geomParams": {

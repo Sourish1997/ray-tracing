@@ -6,5 +6,5 @@ class Material:
         self.amb = amb
 
     @abstractmethod
-    def get_color(self, point, normal, camera, light):
+    def get_color(self, point, normal, ray, light):
         pass

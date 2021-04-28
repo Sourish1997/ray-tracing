@@ -4,7 +4,7 @@ import math
 
 
 class BaseMaterial(Material):
-    def __init__(self, col, amb, dif, spec, ref, n, **kwargs):
+    def __init__(self, col, amb, dif, spec, ref, n):
         super().__init__(amb)
         self.col = np.array(col)
         self.dif = dif
@@ -12,15 +12,19 @@ class BaseMaterial(Material):
         self.ref = ref
         self.n = n
 
-    def get_color(self, point, normal, camera, lights):
+    def get_color(self, point, normal, ray, lights):
         c_rgb = np.zeros(3)
 
         for i in range(len(lights)):
             # Lambertian shading for Diffuse:
+            v = -ray.dir
             n_dot_l = np.dot(-lights[i].get_dir(point), normal)
+            n_dot_v = np.dot(-ray.dir, normal)
+            if n_dot_l < 0 and n_dot_v < 0:
+                normal = -normal
+                n_dot_l = -n_dot_l
 
             # Specular shading
-            v = (camera.cam_from - point) / np.linalg.norm((camera.cam_from - point))
             h = (-lights[i].get_dir(point) + v) / np.linalg.norm(-lights[i].get_dir(point) + v)
             n_dot_h = np.dot(h, normal)
 

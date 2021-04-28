@@ -5,8 +5,8 @@
         "id":"cone1",
         "notes":"",
         "geometry":"cone",
+        "mat_type": "base",
         "material":{
-          "mat_type": "base",
           "col":[
             1,
             1,

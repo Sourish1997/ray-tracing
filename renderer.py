@@ -3,8 +3,8 @@ import math
 import os
 from PIL import Image, ImageChops
 from scene.ray import Ray
-from utils import progress, split_range, reflect, refract, fresnel
-from materials.transmissive import Transmissive
+from utils import progress, split_range, reflect, refract
+from materials.transmissive_material import TransmissiveMaterial
 from scene.point_light import PointLight
 # import tqdm
 from multiprocessing import Process
@@ -66,7 +66,7 @@ class Renderer:
     def is_blocked(self, point, light, dist):
         ray = Ray(point, None, -light.get_dir(point))
         for obj in self.scene.objects:
-            if type(obj.material) is Transmissive:
+            if type(obj.material) is TransmissiveMaterial:
                 continue
             hit_dist = obj.get_intersection(ray)
             if hit_dist is not None and hit_dist < dist:
@@ -82,6 +82,7 @@ class Renderer:
             return color
         point = ray.origin + ray.dir * dist
         normal = obj.get_normal(point)
+
         lights = []
         for light in self.scene.lights:
             dist = math.inf
@@ -89,25 +90,26 @@ class Renderer:
                 dist = np.linalg.norm(point - light.pos)
             if not self.is_blocked(point + normal * self.bias, light, dist):
                 lights.append(light)
+
         if depth < self.max_depth:
-            if type(obj.material) is not Transmissive:
-                color += obj.material.get_color(point, normal, self.scene.cam, lights)
-                # color += self.ray_trace(Ray(point + normal * self.bias, None, ray.dir - 2 * np.dot(ray.dir, normal) * normal), depth + 1) * obj.material.ref
-                color += self.ray_trace(Ray(point + normal * self.bias, None, reflect(ray.dir, normal)), depth + 1) * obj.material.ref
+            if type(obj.material) is not TransmissiveMaterial:
+                color += obj.material.get_color(point, normal, ray, lights)
+                color += self.ray_trace(Ray(point + normal * self.bias, None,
+                                            reflect(ray.dir, normal)), depth + 1) * obj.material.ref
             else:
-                kr = fresnel(ray.dir, normal, obj.material.ior)
-                color += obj.material.get_color(point, normal, self.scene.cam, lights, kr)
+                kr = obj.material.fresnel(ray.dir, normal)
+                color += obj.material.get_color(point, normal, ray, lights)
                 outside = np.dot(ray.dir, normal) < 0
                 bias = self.bias * normal
-                refractionColor = np.zeros(3)
+                refraction_col = np.zeros(3)
                 if kr < 1:
                     if outside:
-                        refractionOrig = point - bias
+                        refraction_orig = point - bias
                     else:
-                        refractionOrig = point + bias
-                    refractionDir = refract(ray.dir, normal, obj.material.ior)
-                    refractionColor = self.ray_trace(Ray(refractionOrig, None, refractionDir), depth + 1)
-                reflectionDir = reflect(ray.dir, normal)
-                reflectionColor = self.ray_trace(Ray(point + bias, None, reflectionDir), depth + 1)
-                color += (reflectionColor * kr + refractionColor * (1 - kr))
+                        refraction_orig = point + bias
+                    refraction_dir = refract(ray.dir, normal, obj.material.ior)
+                    refraction_col = self.ray_trace(Ray(refraction_orig, None, refraction_dir), depth + 1)
+                reflection_dir = reflect(ray.dir, normal)
+                reflection_col = self.ray_trace(Ray(point + bias, None, reflection_dir), depth + 1)
+                color += (reflection_col * kr + refraction_col * (1 - kr))
         return color

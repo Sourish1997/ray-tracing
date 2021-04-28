@@ -5,6 +5,7 @@
         "id":"cylinder1",
         "notes":"",
         "geometry":"cylinder",
+        "mat_type": "base",
         "material":{
           "col":[
             0,
@@ -28,6 +29,7 @@
         "id":"plane1",
         "notes":"",
         "geometry":"plane",
+        "mat_type": "base",
         "material":{
           "col":[
             1,
@@ -49,6 +51,7 @@
         "id":"sphere1",
         "notes":"no scaling",
         "geometry":"sphere",
+        "mat_type": "base",
         "material":{
           "col":[
             1,
@@ -70,6 +73,7 @@
         "id":"sphere2",
         "notes":"",
         "geometry":"sphere",
+        "mat_type": "base",
         "material":{
           "col":[
             0,
