@@ -17,7 +17,7 @@ class Renderer:
         self.bias = 1e-4
         self.max_rays = max_rays
 
-    def render_part(self, cam, top_left, increment, start, end, im, path, name):
+    def render_part(self, cam, top_left, increment, start, end, im, o_im, path, name):
         for i in range(start, end):
             for j in range(cam.height):
                 point = top_left + (i * increment * cam.u) + (j * increment * cam.v)
@@ -26,10 +26,16 @@ class Renderer:
                 else:
                     color = self.ray_trace(Ray(cam.cam_from, point))
                 im.putpixel((i, j), tuple((color * 255).astype(np.int64)))
+
+                if o_im is not None:
+                    o_color = self.ambient_occlusion(Ray(cam.cam_from, point))
+                    o_im.putpixel((i, j), tuple((o_color * 255).astype(np.int64)))
                 progress((i - start) * cam.height + j, (end - start) * cam.height)
         im.save(name)
+        if o_im is not None:
+            o_im.save('o' + name)
 
-    def render(self, process_count, path=False):
+    def render(self, process_count, occlusion=False, path=False):
         # Call ray trace for each pixel in image
         cam = self.scene.cam
         cam_to_screen = np.linalg.norm(cam.cam_to - cam.cam_from)
@@ -42,8 +48,9 @@ class Renderer:
         processes = []
         for i, (start, end) in enumerate(ranges):
             im = Image.new('RGB', (cam.width, cam.height))
+            o_im = Image.new('RGB', (cam.width, cam.height)) if occlusion else None
             process = Process(target=self.render_part,
-                              args=(cam, top_left, increment, start, end, im, path, 'tmp_' + str(i) + '.png'))
+                              args=(cam, top_left, increment, start, end, im, o_im, path, 'tmp' + str(i) + '.png'))
             processes.append(process)
             process.start()
         for process in processes:
@@ -51,10 +58,19 @@ class Renderer:
 
         im = Image.new('RGB', (cam.width, cam.height))
         for i in range(process_count):
-            im_tmp = Image.open('tmp_' + str(i) + '.png')
+            im_tmp = Image.open('tmp' + str(i) + '.png')
             im = ImageChops.add(im, im_tmp)
-            os.remove('tmp_' + str(i) + '.png')
-        return im
+            os.remove('tmp' + str(i) + '.png')
+
+        o_im, f_im = None, None
+        if occlusion:
+            o_im = Image.new('RGB', (cam.width, cam.height))
+            for i in range(process_count):
+                o_im_tmp = Image.open('otmp' + str(i) + '.png')
+                o_im = ImageChops.add(o_im, o_im_tmp)
+                os.remove('otmp' + str(i) + '.png')
+            f_im = ImageChops.add(im, o_im)
+        return im, o_im, f_im
 
     def find_nearest_hit(self, ray):
         dist_min = None
@@ -75,6 +91,34 @@ class Renderer:
             if hit_dist is not None and hit_dist < dist:
                 return True
         return False
+
+    def is_occluded(self, ray, dist):
+        for obj in self.scene.objects:
+            if type(obj.material) is TransmissiveMaterial:
+                continue
+            hit_dist = obj.get_intersection(ray)
+            if hit_dist is not None and hit_dist < dist:
+                return True
+        return False
+
+    def ambient_occlusion(self, ray):
+        ambient_color = np.array([0.5, 0.5, 0.5])
+        max_rays = 50
+        max_dist = 20
+        occlusion = 0
+        dist, obj = self.find_nearest_hit(ray)
+        if dist is None:
+            return np.array([0, 0, 0], dtype=np.float32)
+        point = ray.origin + ray.dir * dist
+        normal = obj.get_normal(point)
+        for i in range(max_rays):
+            direction, prob = importance_sample_hemisphere(normal)
+            new_ray = Ray(point + normal * self.bias, None, direction)
+            vis = 1
+            if self.is_occluded(new_ray, max_dist):
+                vis = 0
+            occlusion += vis * np.dot(new_ray.dir, normal) / (math.pi * prob)
+        return (occlusion / max_rays) * ambient_color
     
     def ray_trace(self, ray, depth=0):
         # Find nearest intersection for ray, compute reflected ray and call recursively

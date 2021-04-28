@@ -60,14 +60,16 @@ def parse_scene_json(scene_json):
 
 def main():
     # Create a scene object
-    scene = parse_scene_json('scene2.json')
+    scene = parse_scene_json('scene.json')
 
     # Create a renderer object with scene passed as param
     renderer = Renderer(scene, 3)
 
     # Call the renderer's render function
-    im = renderer.render(8)
-    im.save('img2.png')
+    im, o_im, f_im = renderer.render(8, True)
+    im.save('img.png')
+    o_im.save('o_img.png')  # Comment this out if you pass False as the occlusion parameter to renderer()
+    f_im.save('f_img.png') # Comment this out if you pass False as the occlusion parameter to renderer()
 
 
 if __name__ == '__main__':
