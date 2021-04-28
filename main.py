@@ -8,8 +8,9 @@ from objects.cylinder import Cylinder
 from objects.plane import Plane
 from objects.triangle import Triangle
 from objects.cone import Cone
-from materials.base_material import BaseMaterial
+from materials.ref_blinn_material import RefBlinnMaterial
 from materials.transmissive_material import TransmissiveMaterial
+from materials.path_blinn_material import PathBlinnMaterial
 import json
 
 
@@ -36,9 +37,11 @@ def parse_scene_json(scene_json):
     for obj in scene['shapes']:
         kwargs = obj['geomParams']
         if obj['mat_type'] == 'base':
-            obj_type = BaseMaterial
+            obj_type = RefBlinnMaterial
         elif obj['mat_type'] == 'transmissive':
             obj_type = TransmissiveMaterial
+        elif obj['mat_type'] == 'path_blinn':
+            obj_type = PathBlinnMaterial
 
         kwargs.update({'material': obj_type(**obj['material'])})
         if obj['geometry'] == 'sphere':
@@ -57,14 +60,14 @@ def parse_scene_json(scene_json):
 
 def main():
     # Create a scene object
-    scene = parse_scene_json('scene.json')
+    scene = parse_scene_json('scene2.json')
 
     # Create a renderer object with scene passed as param
     renderer = Renderer(scene, 3)
 
     # Call the renderer's render function
     im = renderer.render(8)
-    im.save('img.png')
+    im.save('img2.png')
 
 
 if __name__ == '__main__':

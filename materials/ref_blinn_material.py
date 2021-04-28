@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 
-class BaseMaterial(Material):
+class RefBlinnMaterial(Material):
     def __init__(self, col, amb, dif, spec, ref, n):
         super().__init__(amb)
         self.col = np.array(col)
@@ -20,9 +20,8 @@ class BaseMaterial(Material):
             v = -ray.dir
             n_dot_l = np.dot(-lights[i].get_dir(point), normal)
             n_dot_v = np.dot(-ray.dir, normal)
-            if n_dot_l < 0 and n_dot_v < 0:
-                normal = -normal
-                n_dot_l = -n_dot_l
+            if n_dot_v < 0:
+                return c_rgb
 
             # Specular shading
             h = (-lights[i].get_dir(point) + v) / np.linalg.norm(-lights[i].get_dir(point) + v)

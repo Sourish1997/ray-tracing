@@ -1,4 +1,6 @@
 import numpy as np
+import random
+from math import sin, cos, acos, asin, sqrt, pi
 
 
 def progress(count, total, suffix=''):
@@ -43,3 +45,21 @@ def refract(i, n, ior):
     else:
         return eta * i + (eta * cos_i - np.sqrt(k)) * n
 
+
+def importance_sample_hemisphere(n):
+    eta_i = random.uniform(0, 1)
+    eta_j = random.uniform(0, 1)
+    phi = 2 * pi * eta_i
+    theta = asin(sqrt(eta_j))
+
+    l_u = sin(theta) * cos(phi)
+    l_v = cos(theta)
+    l_w = sin(theta) * sin(phi)
+
+    u = np.random.randn(3)  # take a random vector
+    u -= u.dot(n) * n  # make it orthogonal to k
+    u /= np.linalg.norm(u)
+    w = np.cross(n, u)
+    w /= np.linalg.norm(w)
+
+    return u * l_u + n * l_v + w * l_w, cos(theta) / pi

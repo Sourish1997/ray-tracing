@@ -3,30 +3,33 @@ import math
 import os
 from PIL import Image, ImageChops
 from scene.ray import Ray
-from utils import progress, split_range, reflect, refract
+from utils import progress, split_range, reflect, refract, importance_sample_hemisphere
 from materials.transmissive_material import TransmissiveMaterial
 from scene.point_light import PointLight
-# import tqdm
 from multiprocessing import Process
 import scene
 
 
 class Renderer:
-    def __init__(self, scene, max_depth):
+    def __init__(self, scene, max_depth, max_rays=100):
         self.scene = scene
         self.max_depth = max_depth
         self.bias = 1e-4
+        self.max_rays = max_rays
 
-    def render_part(self, cam, top_left, increment, start, end, im, name):
+    def render_part(self, cam, top_left, increment, start, end, im, path, name):
         for i in range(start, end):
             for j in range(cam.height):
                 point = top_left + (i * increment * cam.u) + (j * increment * cam.v)
-                color = self.ray_trace(Ray(cam.cam_from, point))
+                if path:
+                    color = self.path_trace(Ray(cam.cam_from, point))
+                else:
+                    color = self.ray_trace(Ray(cam.cam_from, point))
                 im.putpixel((i, j), tuple((color * 255).astype(np.int64)))
                 progress((i - start) * cam.height + j, (end - start) * cam.height)
         im.save(name)
 
-    def render(self, process_count):
+    def render(self, process_count, path=False):
         # Call ray trace for each pixel in image
         cam = self.scene.cam
         cam_to_screen = np.linalg.norm(cam.cam_to - cam.cam_from)
@@ -40,7 +43,7 @@ class Renderer:
         for i, (start, end) in enumerate(ranges):
             im = Image.new('RGB', (cam.width, cam.height))
             process = Process(target=self.render_part,
-                              args=(cam, top_left, increment, start, end, im, 'tmp_' + str(i) + '.png'))
+                              args=(cam, top_left, increment, start, end, im, path, 'tmp_' + str(i) + '.png'))
             processes.append(process)
             process.start()
         for process in processes:
@@ -82,6 +85,8 @@ class Renderer:
             return color
         point = ray.origin + ray.dir * dist
         normal = obj.get_normal(point)
+        if np.dot(-ray.dir, normal) < 0:
+            normal = -normal
 
         lights = []
         for light in self.scene.lights:
@@ -117,3 +122,43 @@ class Renderer:
                 reflection_col = self.ray_trace(Ray(reflection_orig, None, reflection_dir), depth + 1)
                 color += (reflection_col * kr + refraction_col * (1 - kr))
         return color
+
+    def path_trace(self, ray):
+        color = np.array([0, 0, 0], dtype=np.float32)
+        dist, obj = self.find_nearest_hit(ray)
+        if dist is None:
+            return color
+
+        def trace_random_path(ray, depth=0):
+            color = np.array([0, 0, 0], dtype=np.float32)
+            dist, obj = self.find_nearest_hit(ray)
+            if dist is None:
+                return color
+            point = ray.origin + ray.dir * dist
+            normal = obj.get_normal(point)
+            if np.dot(-ray.dir, normal) < 0:
+                normal = -normal
+
+            lights = []
+            for light in self.scene.lights:
+                dist = math.inf
+                if type(light) == scene.point_light.PointLight:
+                    dist = np.linalg.norm(point - light.pos)
+                if not self.is_blocked(point + normal * self.bias, light, dist):
+                    lights.append(light)
+
+            for light in lights:
+                w_i = Ray(point, None, -light.get_dir(point))
+                color += light.col * light.get_intensity(point) * \
+                         obj.material.brdf(normal, ray, w_i) * np.dot(normal, w_i.dir)
+
+            if depth < self.max_depth:
+                direction, prob = importance_sample_hemisphere(normal)
+                new_ray = Ray(point + normal * self.bias, None, direction)
+                color += trace_random_path(new_ray, depth + 1) * obj.material.brdf(normal, ray, new_ray) * \
+                         np.dot(normal, new_ray.dir) / prob
+            return color
+
+        for i in range(self.max_rays):
+            color += trace_random_path(ray)
+        return color / self.max_rays
