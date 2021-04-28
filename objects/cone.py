@@ -9,16 +9,21 @@ class Cone(Object):
         self.p1 = np.array(p1)
         self.center = self.p1
         self.pa = np.array(pa)
-        self.h = np.linalg.norm(np.abs(np.subtract(pa, p1)))
         # right now va is hard coded for upright cone only, TODO refactor for any va 
         self.va = (np.array([0, 1, 0]) + self.pa - self.p1) / np.linalg.norm(np.array([0, 1, 0]) + self.pa - self.p1)
         self.r1 = r1
+        self.h = np.linalg.norm(np.abs(np.subtract(self.pa, p1)))
         self.alpha = np.arctan(r1 / self.h)
+
+        # self.pa = self.p1 + self.r1 * (self.p2 - self.p1) / (self.r1 - self.r2)
+        # self.va = (self.p2 - self.p1) / np.linalg.norm(self.p2 - self.p1)
+        # self.alpha = (self.r1 - self.r2) / np.linalg.norm(self.p2 - self.p1)
 
         print("height of the cone: {}".format(self.h))
         print("angle: {}".format(self.alpha))
         print("pA: {}".format(self.pa))
         print("p1: {}".format(self.center))
+        # print("p2: {}".format(self.p2))
         print("pV: {}".format(self.va))
 
     def get_intersection(self, ray):
@@ -44,6 +49,12 @@ class Cone(Object):
             hit = min((-b - math.sqrt(disc)) / (2 * a), (-b + math.sqrt(disc)) / (2 * a))
             if hit <= 0:
                 return None
+
+            cp = p + hit * ray.dir - self.pa
+            hit_h = np.dot(cp, self.va)
+            if hit_h < 0 or hit_h > self.h:
+                return None
+
         return hit
 
     def get_normal(self, point):
