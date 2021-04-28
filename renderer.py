@@ -91,14 +91,14 @@ class Renderer:
             if not self.is_blocked(point + normal * self.bias, light, dist):
                 lights.append(light)
 
+        color += obj.material.get_color(point, normal, ray, lights)
+
         if depth < self.max_depth:
             if type(obj.material) is not TransmissiveMaterial:
-                color += obj.material.get_color(point, normal, ray, lights)
                 color += self.ray_trace(Ray(point + normal * self.bias, None,
                                             reflect(ray.dir, normal)), depth + 1) * obj.material.ref
             else:
                 kr = obj.material.fresnel(ray.dir, normal)
-                color += obj.material.get_color(point, normal, ray, lights)
                 outside = np.dot(ray.dir, normal) < 0
                 bias = self.bias * normal
                 refraction_col = np.zeros(3)
@@ -110,6 +110,10 @@ class Renderer:
                     refraction_dir = refract(ray.dir, normal, obj.material.ior)
                     refraction_col = self.ray_trace(Ray(refraction_orig, None, refraction_dir), depth + 1)
                 reflection_dir = reflect(ray.dir, normal)
-                reflection_col = self.ray_trace(Ray(point + bias, None, reflection_dir), depth + 1)
+                if outside:
+                    reflection_orig = point + bias
+                else:
+                    reflection_orig = point - bias
+                reflection_col = self.ray_trace(Ray(reflection_orig, None, reflection_dir), depth + 1)
                 color += (reflection_col * kr + refraction_col * (1 - kr))
         return color
