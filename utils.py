@@ -63,3 +63,43 @@ def importance_sample_hemisphere(n):
     w /= np.linalg.norm(w)
 
     return u * l_u + n * l_v + w * l_w, cos(theta) * sin(theta) / pi
+
+
+# Toon Shading
+def kmeans(self, x):
+    np.random.seed(42)
+    N, D = x.shape
+    centroids = x[np.random.choice(len(x), self.n_cluster)]
+    gamma = np.zeros(N)
+    sse = None
+
+    for i in range(self.max_iter):
+        # Assign each data point to nearest centroid
+        distance = ((np.reshape(x, (N, 1, D)) - centroids) ** 2).sum(axis=2)
+        gamma = np.argmin(distance, axis=1)
+
+        # Compute SSE to check for convergence
+        sse_new = ((x - centroids[gamma.astype(int)]) ** 2).sum() / N
+        if sse is None:
+            sse = sse_new
+        elif abs(sse_new - sse) < self.e:
+            break
+        else:
+            sse = sse_new
+
+        # Compute new centroids as mean of data points in each cluster
+        centroids_new = np.zeros((self.n_cluster, D))
+        for centroid_ind in range(self.n_cluster):
+            cluster_data = x[gamma == centroid_ind]
+            centroids_new[centroid_ind] = cluster_data.mean(axis=0)
+        centroids = centroids_new
+
+    return centroids, i + 1
+
+
+def transform_image(image, centroids):
+    N, M = image.shape[:2]
+    distances = ((np.reshape(image, (N, M, 1, 3)) - centroids) ** 2).sum(axis=3)
+    centroid_indices = np.argmin(distances, axis=2)
+
+    return centroids[centroid_indices]
