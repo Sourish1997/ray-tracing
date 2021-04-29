@@ -29,15 +29,15 @@
         "mat_type": "base",
         "material":{
           "col":[
-            0,
-            0,
-            1
+            1,
+            0.6,
+            0.6
           ],
           "amb":0.5,
           "dif":0.8,
           "spec":0.18,
           "n":50.0,
-          "ref": 0.1
+          "ref": 0
         },
         "geomParams": {
           "center": [2, 0, 6],
@@ -51,7 +51,7 @@
         "geometry":"sphere",
         "mat_type": "transmissive",
         "material":{
-          "amb":1,
+          "amb":0,
           "ior": 1.5
         },
         "geomParams": {
@@ -65,12 +65,44 @@
         "geometry":"sphere",
         "mat_type": "transmissive",
         "material":{
-          "amb":1,
+          "amb":0,
           "ior": 1.5
         },
         "geomParams": {
           "center": [1, 0, 0],
           "radius": 1       
+        }
+      },
+      {
+        "id":"cylinder5",
+        "notes":"",
+        "geometry":"cylinder",
+        "mat_type": "transmissive",
+        "material":{
+          "amb":0.3,
+          "ior": 1.5
+        },
+        "geomParams": {
+          "center": [-3, 0, 5],
+          "radius": 2,
+          "h": 12,
+          "v": [0, 1, 0]
+        }
+      },
+      {
+        "id":"cylinder6",
+        "notes":"",
+        "geometry":"cylinder",
+        "mat_type": "transmissive",
+        "material":{
+          "amb":0.3,
+          "ior": 1.5
+        },
+        "geomParams": {
+          "center": [7, 0, 5],
+          "radius": 2,
+          "h": 12,
+          "v": [0, 1, 0]
         }
       }
     ],
@@ -83,7 +115,7 @@
           1,
           1
         ],
-        "intensity":200,
+        "intensity":400,
         "pos":[
           6,
           -6,
@@ -94,15 +126,30 @@
         "id":"L2",
         "type":"point",
         "color":[
-          1,
+          0,
           1,
           1
         ],
-        "intensity":200,
+        "intensity":300,
         "pos":[
           0,
           4,
           -2
+        ]
+      },
+      {
+        "id":"L4",
+        "type":"point",
+        "color":[
+          1,
+          0,
+          0
+        ],
+        "intensity":200,
+        "pos":[
+          4,
+          -3,
+          9
         ]
       },
       {
@@ -113,7 +160,7 @@
           1,
           1
         ],
-        "intensity":0.6,
+        "intensity":1.5,
         "from":[
           -8,
           -8,
@@ -149,8 +196,8 @@
       ],
       "fov": 3,
       "resolution":[
-        512,
-        512
+        2048,
+        2048
       ]
     }
   }

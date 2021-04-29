@@ -27,6 +27,8 @@ class TransmissiveMaterial(Material):
 
     def get_color(self, point, normal, ray, lights):
         c_rgb = np.zeros(3)
+        ambient = np.array([0.4, 0.4, 0.4])
+        c_rgb += self.amb * ambient
 
         for i in range(len(lights)):
             a = lights[i].get_dir(point) / point

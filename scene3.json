@@ -105,6 +105,21 @@
         ]
       },
       {
+        "id":"L2",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":200,
+        "pos":[
+          0,
+          4,
+          -2
+        ]
+      },
+      {
         "id":"L3",
         "type":"directional",
         "color":[
@@ -148,8 +163,8 @@
       ],
       "fov": 3,
       "resolution":[
-        256,
-        256
+        512,
+        512
       ]
     }
   }

@@ -11,12 +11,13 @@ import scene
 
 
 class Renderer:
-    def __init__(self, scene, max_depth, max_rays=100, k_a=0.1):
+    def __init__(self, scene, max_depth, max_rays=100, k_a=0.1, refr_att=0.8):
         self.scene = scene
         self.max_depth = max_depth
         self.bias = 1e-4
         self.max_rays = max_rays
         self.k_a = k_a
+        self.refr_att = refr_att
 
     def render_part(self, cam, top_left, increment, start, end, im, o_im, path, name):
         for i in range(start, end):
@@ -165,7 +166,7 @@ class Renderer:
                 else:
                     reflection_orig = point - bias
                 reflection_col = self.ray_trace(Ray(reflection_orig, None, reflection_dir), depth + 1)
-                color += (reflection_col * kr + refraction_col * (1 - kr))
+                color += (reflection_col * kr + refraction_col * (1 - kr) * self.refr_att)
         return color
 
     def path_trace(self, ray):
