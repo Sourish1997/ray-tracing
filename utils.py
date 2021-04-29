@@ -62,4 +62,4 @@ def importance_sample_hemisphere(n):
     w = np.cross(n, u)
     w /= np.linalg.norm(w)
 
-    return u * l_u + n * l_v + w * l_w, cos(theta) / pi
+    return u * l_u + n * l_v + w * l_w, cos(theta) * sin(theta) / pi

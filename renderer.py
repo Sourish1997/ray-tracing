@@ -200,8 +200,9 @@ class Renderer:
             if depth < self.max_depth:
                 direction, prob = importance_sample_hemisphere(normal)
                 new_ray = Ray(point + normal * self.bias, None, direction)
-                color += trace_random_path(new_ray, depth + 1) * obj.material.brdf(normal, ray, new_ray) * \
-                         np.dot(normal, new_ray.dir) / prob
+                val = trace_random_path(new_ray, depth + 1) * obj.material.brdf(normal, ray, new_ray) * \
+                      np.dot(normal, new_ray.dir) / prob
+                color += val
             return color
 
         for i in range(self.max_rays):

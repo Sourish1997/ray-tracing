@@ -15,4 +15,4 @@ class PathBlinnMaterial(PathMaterial):
             return np.zeros(3)
         h = (-w_o.dir + w_i.dir) / np.linalg.norm(-w_o.dir + w_i.dir)
         n_dot_h = np.dot(n, h)
-        return (self.dif / math.pi) + (self.spec * (self.n + 8) / (8 * math.pi) * pow(math.cos(n_dot_h), self.n))
+        return (self.dif / math.pi) + (self.spec * (self.n + 8) * pow(math.cos(n_dot_h), self.n) / (8 * math.pi))
