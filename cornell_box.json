@@ -1,0 +1,219 @@
+{
+  "scene":{
+    "shapes":[
+      {
+        "id":"left_wall",
+        "notes":"",
+        "geometry":"plane",
+        "mat_type": "base",
+        "material":{
+          "col":[
+            1,
+            0,
+            0
+          ],
+          "amb":0.5,
+          "dif":0.9,
+          "spec":0.3,
+          "n":50.0,
+          "ref": 0.0
+        },
+        "geomParams": {
+          "point0": [-1, 0, 0],
+          "normal": [1, 0, 0]
+        }
+      },
+      {
+        "id":"right_wall",
+        "notes":"",
+        "geometry":"plane",
+        "mat_type": "base",
+        "material":{
+          "col":[
+            0,
+            1,
+            0
+          ],
+          "amb":0.5,
+          "dif":0.9,
+          "spec":0.3,
+          "n":50.0,
+          "ref": 0.0
+        },
+        "geomParams": {
+          "point0": [7, 0, 0],
+          "normal": [-1, 0, 0]
+        }
+      },
+      {
+        "id":"floor",
+        "notes":"",
+        "geometry":"plane",
+        "mat_type": "base",
+        "material":{
+          "col":[
+            1,
+            1,
+            1
+          ],
+          "amb":0.5,
+          "dif":0.9,
+          "spec":0.3,
+          "n":50.0,
+          "ref": 0.0
+        },
+        "geomParams": {
+          "point0": [0, 4, 0],
+          "normal": [0, -1, 0]
+        }
+      },
+      {
+        "id":"ceiling",
+        "notes":"",
+        "geometry":"plane",
+        "mat_type": "base",
+        "material":{
+          "col":[
+            1,
+            1,
+            1
+          ],
+          "amb":0.5,
+          "dif":0.9,
+          "spec":0.3,
+          "n":50.0,
+          "ref": 0.0
+        },
+        "geomParams": {
+          "point0": [0, -4, 0],
+          "normal": [0, 1, 0]
+        }
+      },
+      {
+        "id":"back_wall",
+        "notes":"",
+        "geometry":"plane",
+        "mat_type": "base",
+        "material":{
+          "col":[
+            1,
+            1,
+            1
+          ],
+          "amb":0.5,
+          "dif":0.9,
+          "spec":0.3,
+          "n":50.0,
+          "ref": 0.0
+        },
+        "geomParams": {
+          "point0": [0, 0, 4],
+          "normal": [0, 0, -1]
+        }
+      },
+      {
+        "id":"cylinder1",
+        "notes":"",
+        "geometry":"cylinder",
+        "mat_type": "base",
+        "material":{
+          "col":[
+            0,
+            0,
+            1
+          ],
+          "amb":0.5,
+          "dif":0.8,
+          "spec":0.18,
+          "n":50.0,
+          "ref": 0.2
+        },
+        "geomParams": {
+          "center": [0, 0, 2],
+          "radius": 1,
+          "h": 4,
+          "v": [0, 1, 0]
+        }
+      },
+      {
+        "id":"cube",
+        "notes":"",
+        "geometry":"sphere",
+        "mat_type": "base",
+        "material":{
+          "col":[
+            1,
+            0,
+            1
+          ],
+          "amb":0.5,
+          "dif":0.8,
+          "spec":0.18,
+          "n":50.0,
+          "ref": 0.2
+        },
+        "geomParams": {
+          "center": [4, 1, 2],
+          "radius": 2
+        }
+      },
+      {
+        "id":"sphere1",
+        "geometry":"sphere",
+        "mat_type": "transmissive",
+        "material":{
+          "amb":1,
+          "ior": 1.2
+        },
+        "geomParams": {
+          "center": [1, 1, 1],
+          "radius": 2 
+        }
+      }
+    ],
+    "lights":[
+      {
+        "id":"L1",
+        "type":"point",
+        "color":[
+          1,
+          1,
+          1
+        ],
+        "intensity":100,
+        "pos":[
+          3,
+          -2,
+          0
+        ]
+      }
+    ],
+    "camera":{
+      "from":[
+        3,
+        3,
+        -8
+      ],
+      "to":[
+        3,
+        2.6,
+        -7
+      ],
+      "u":[
+        1,
+        0,
+        0
+      ],
+      "v":[
+        0,
+        1,
+        0
+      ],
+      "fov": 3,
+      "resolution":[
+        128,
+        128
+      ]
+    }
+  }
+}
