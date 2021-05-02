@@ -5,6 +5,8 @@ from PIL import Image, ImageChops
 from scene.ray import Ray
 from utils import progress, split_range, reflect, refract, importance_sample_hemisphere
 from materials.transmissive_material import TransmissiveMaterial
+from materials.ref_blinn_material import RefBlinnMaterial
+from materials.reflective_material import ReflectiveMaterial
 from scene.point_light import PointLight
 from multiprocessing import Process
 import scene
@@ -145,7 +147,7 @@ class Renderer:
         color += obj.material.get_color(point, normal, ray, lights)
 
         if depth < self.max_depth:
-            if type(obj.material) is not TransmissiveMaterial:
+            if type(obj.material) is RefBlinnMaterial or type(obj.material) is ReflectiveMaterial:
                 color += self.ray_trace(Ray(point + normal * self.bias, None,
                                             reflect(ray.dir, normal)), depth + 1) * obj.material.ref
             else:

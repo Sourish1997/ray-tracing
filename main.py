@@ -5,12 +5,14 @@ from scene.scene import Scene
 from renderer import Renderer
 from objects.sphere import Sphere
 from objects.cylinder import Cylinder
+from objects.cuboid import Cuboid
 from objects.plane import Plane
 from objects.triangle import Triangle
 from objects.cone import Cone
 from materials.ref_blinn_material import RefBlinnMaterial
 from materials.transmissive_material import TransmissiveMaterial
 from materials.path_blinn_material import PathBlinnMaterial
+from materials.reflective_material import ReflectiveMaterial
 import json
 
 
@@ -40,6 +42,8 @@ def parse_scene_json(scene_json):
             obj_type = RefBlinnMaterial
         elif obj['mat_type'] == 'transmissive':
             obj_type = TransmissiveMaterial
+        elif obj['mat_type'] == 'reflective':
+            obj_type = ReflectiveMaterial
         elif obj['mat_type'] == 'path_blinn':
             obj_type = PathBlinnMaterial
 
@@ -54,20 +58,22 @@ def parse_scene_json(scene_json):
             scene_obj = Triangle(**kwargs)
         elif obj['geometry'] == 'cone':
             scene_obj = Cone(**kwargs)
+        elif obj['geometry'] == 'cuboid':
+            scene_obj = Cuboid(**kwargs)
         objects.append(scene_obj)
     return Scene(cam, lights, objects)
 
 
 def main():
     # Create a scene object
-    scene = parse_scene_json('scene2.json')
+    scene = parse_scene_json('ref.json')
 
     # Create a renderer object with scene passed as param
     renderer = Renderer(scene, 2)
 
     # Call the renderer's render function
     im, o_im, f_im = renderer.render(8)
-    im.save('img2.png')
+    im.save('ref.png')
     # o_im.save('o_img.png')  # Comment this out if you pass False as the occlusion parameter to renderer()
     # f_im.save('f_img.png')  # Comment this out if you pass False as the occlusion parameter to renderer()
 
